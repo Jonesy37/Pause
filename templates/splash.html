@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Press Pause</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="splash-body">
+    <div class="stars stars-small"></div>
+    <div class="stars stars-medium"></div>
+    <div class="stars stars-large"></div>
+
+    <main class="splash">
+        <h1 class="splash-headline">Press pause to save the world.</h1>
+
+        <div id="globe-container" class="globe-container"></div>
+
+        <button type="button" class="pause-button" aria-label="Press pause to enter the site">
+            <span class="pause-icon" aria-hidden="true">
+                <span class="pause-bar"></span>
+                <span class="pause-bar"></span>
+            </span>
+        </button>
+    </main>
+
+    <audio id="pause-audio" src="{{ url_for('static', filename='audio/thatwaseasy.m4a') }}" preload="auto"></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <script>
+    // Shared state between the Three.js scene and the click handler
+    // so the click handler can drive the zoom-in animation.
+    const PressPause = { camera: null, startZ: 4.2 };
+
+    // ===== Three.js realistic Earth =====
+    (function () {
+        const container = document.getElementById('globe-container');
+        // Canvas is much larger than the globe so the atmospheric
+        // glow fades to transparent well before hitting any edge.
+        const canvasSize = Math.min(window.innerWidth * 0.85, 700);
+        container.style.width = canvasSize + 'px';
+        container.style.height = canvasSize + 'px';
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+        camera.position.z = PressPause.startZ;
+        PressPause.camera = camera;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setClearColor(0x000000, 0);   // fully transparent background
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(canvasSize, canvasSize);
+        renderer.domElement.style.background = 'transparent';
+        container.appendChild(renderer.domElement);
+
+        const loader = new THREE.TextureLoader();
+        const earthTex   = loader.load("{{ url_for('static', filename='images/earth_color.jpg') }}");
+        const normalTex  = loader.load("{{ url_for('static', filename='images/earth_normal.jpg') }}");
+        const specTex    = loader.load("{{ url_for('static', filename='images/earth_specular.jpg') }}");
+        const cloudsTex  = loader.load("{{ url_for('static', filename='images/earth_clouds.png') }}");
+
+        // Earth sphere
+        const earthGeo = new THREE.SphereGeometry(1, 96, 96);
+        const earthMat = new THREE.MeshPhongMaterial({
+            map: earthTex,
+            normalMap: normalTex,
+            specularMap: specTex,
+            specular: new THREE.Color(0x333333),
+            shininess: 18,
+        });
+        const earth = new THREE.Mesh(earthGeo, earthMat);
+        earth.rotation.z = 0.41; // axial tilt ~23.5°
+        scene.add(earth);
+
+        // Clouds — slightly larger, transparent
+        const cloudsGeo = new THREE.SphereGeometry(1.01, 96, 96);
+        const cloudsMat = new THREE.MeshPhongMaterial({
+            map: cloudsTex,
+            transparent: true,
+            opacity: 0.55,
+            depthWrite: false,
+        });
+        const clouds = new THREE.Mesh(cloudsGeo, cloudsMat);
+        clouds.rotation.z = 0.41;
+        scene.add(clouds);
+
+        // Atmospheric glow (backside-rendered shader sphere)
+        const atmosGeo = new THREE.SphereGeometry(1.15, 64, 64);
+        const atmosMat = new THREE.ShaderMaterial({
+            vertexShader: `
+                varying vec3 vNormal;
+                void main() {
+                    vNormal = normalize(normalMatrix * normal);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                varying vec3 vNormal;
+                void main() {
+                    float intensity = pow(0.65 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+                    gl_FragColor = vec4(0.3, 0.6, 1.0, 1.0) * intensity;
+                }
+            `,
+            blending: THREE.AdditiveBlending,
+            side: THREE.BackSide,
+            transparent: true,
+        });
+        const atmos = new THREE.Mesh(atmosGeo, atmosMat);
+        scene.add(atmos);
+
+        // Lighting — sun from upper-left
+        const sun = new THREE.DirectionalLight(0xffffff, 1.4);
+        sun.position.set(-4, 2, 3);
+        scene.add(sun);
+        scene.add(new THREE.AmbientLight(0x222233, 1));
+
+        // Animate
+        function animate() {
+            requestAnimationFrame(animate);
+            earth.rotation.y  += 0.0015;
+            clouds.rotation.y += 0.0019;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            const s = Math.min(window.innerWidth * 0.85, 700);
+            container.style.width = s + 'px';
+            container.style.height = s + 'px';
+            renderer.setSize(s, s);
+        });
+    })();
+
+    // ===== Synthesize a "large machine powering down" sound =======
+    // Pure Web Audio — no asset files. Layers a descending sawtooth
+    // whine, a low rumbling sine, and a low-pass-filtered noise tail
+    // that all decay exponentially over the given duration.
+    function playPowerDown(duration = 5) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        const ctx = new Ctx();
+        const t0  = ctx.currentTime;
+        const t1  = t0 + duration;
+
+        // 1. Descending mechanical whine (sawtooth)
+        const whine = ctx.createOscillator();
+        whine.type = 'sawtooth';
+        whine.frequency.setValueAtTime(220, t0);
+        whine.frequency.exponentialRampToValueAtTime(18, t1);
+
+        const whineFilter = ctx.createBiquadFilter();
+        whineFilter.type = 'lowpass';
+        whineFilter.frequency.setValueAtTime(1800, t0);
+        whineFilter.frequency.exponentialRampToValueAtTime(120, t1);
+
+        const whineGain = ctx.createGain();
+        whineGain.gain.setValueAtTime(0.001, t0);
+        whineGain.gain.exponentialRampToValueAtTime(0.28, t0 + 0.05);
+        whineGain.gain.exponentialRampToValueAtTime(0.001, t1);
+
+        whine.connect(whineFilter).connect(whineGain).connect(ctx.destination);
+        whine.start(t0);
+        whine.stop(t1 + 0.05);
+
+        // 2. Sub-bass rumble (sine)
+        const rumble = ctx.createOscillator();
+        rumble.type = 'sine';
+        rumble.frequency.setValueAtTime(95, t0);
+        rumble.frequency.exponentialRampToValueAtTime(14, t1);
+
+        const rumbleGain = ctx.createGain();
+        rumbleGain.gain.setValueAtTime(0.001, t0);
+        rumbleGain.gain.exponentialRampToValueAtTime(0.45, t0 + 0.08);
+        rumbleGain.gain.exponentialRampToValueAtTime(0.001, t1);
+
+        rumble.connect(rumbleGain).connect(ctx.destination);
+        rumble.start(t0);
+        rumble.stop(t1 + 0.05);
+
+        // 3. Mechanical noise tail — filtered white noise that closes
+        const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+        const data = noiseBuf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = noiseBuf;
+
+        const noiseFilter = ctx.createBiquadFilter();
+        noiseFilter.type = 'lowpass';
+        noiseFilter.frequency.setValueAtTime(900, t0);
+        noiseFilter.frequency.exponentialRampToValueAtTime(60, t1);
+
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.001, t0);
+        noiseGain.gain.exponentialRampToValueAtTime(0.16, t0 + 0.05);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, t1);
+
+        noise.connect(noiseFilter).connect(noiseGain).connect(ctx.destination);
+        noise.start(t0);
+        noise.stop(t1);
+    }
+
+    // ===== Button press → power down → zoom → voice → mission =====
+    (function () {
+        const button = document.querySelector('.pause-button');
+        const audio  = document.getElementById('pause-audio');
+        let pressed  = false;
+
+        // Easing — slow start, fast finish so the zoom "accelerates in"
+        const easeInCubic = t => t * t * t;
+
+        function animateZoom(durationMs) {
+            const cam = PressPause.camera;
+            if (!cam) return;
+            const startZ  = PressPause.startZ;
+            const endZ    = 1.05;     // just outside the globe surface (radius 1)
+            const startMs = performance.now();
+
+            function step(now) {
+                const t = Math.min(1, (now - startMs) / durationMs);
+                const e = easeInCubic(t);
+                cam.position.z = startZ + (endZ - startZ) * e;
+                if (t < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        button.addEventListener('click', () => {
+            if (pressed) return;
+            pressed = true;
+            button.classList.add('pressed');
+            button.disabled = true;
+
+            // t = 0   :  powering-down sound starts (5s long)
+            playPowerDown(5);
+
+            // t = 2s  :  start the 3-second zoom into the globe
+            setTimeout(() => animateZoom(3000), 2000);
+
+            // t = 5s  :  zoom done — play the voice and start fading out
+            setTimeout(() => {
+                audio.currentTime = 0;
+                const p = audio.play();
+                if (p) p.catch(() => {});
+                document.body.classList.add('fade-out');
+            }, 5000);
+
+            // t = ~6.2s : voice has played — navigate to the mission page
+            setTimeout(() => { window.location.href = '/mission'; }, 6200);
+        });
+    })();
+    </script>
+</body>
+</html>

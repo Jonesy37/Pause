@@ -1,0 +1,438 @@
+/* ============================================================
+   Press Pause — global styles
+   ============================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background: #000;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* ============================================================
+   SPLASH PAGE
+   ============================================================ */
+
+.splash-body {
+    min-height: 100vh;
+    background: #000;
+    overflow: hidden;
+    position: relative;
+    transition: opacity 1.2s ease;
+}
+
+.splash-body.fade-out {
+    opacity: 0;
+}
+
+/* --- Starfield: three layers of twinkling stars ---------------- */
+.stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.stars-small {
+    background-image:
+        radial-gradient(1px 1px at  6% 12%, #fff, transparent),
+        radial-gradient(1px 1px at 14% 38%, #fff, transparent),
+        radial-gradient(1px 1px at 21%  7%, #fff, transparent),
+        radial-gradient(1px 1px at 27% 28%, #fff, transparent),
+        radial-gradient(1px 1px at 33% 53%, #fff, transparent),
+        radial-gradient(1px 1px at 39% 18%, #fff, transparent),
+        radial-gradient(1px 1px at 44% 71%, #fff, transparent),
+        radial-gradient(1px 1px at 50% 41%, #fff, transparent),
+        radial-gradient(1px 1px at 55% 86%, #fff, transparent),
+        radial-gradient(1px 1px at 62% 24%, #fff, transparent),
+        radial-gradient(1px 1px at 68% 60%, #fff, transparent),
+        radial-gradient(1px 1px at 73%  8%, #fff, transparent),
+        radial-gradient(1px 1px at 79% 47%, #fff, transparent),
+        radial-gradient(1px 1px at 84% 79%, #fff, transparent),
+        radial-gradient(1px 1px at 90% 33%, #fff, transparent),
+        radial-gradient(1px 1px at 95% 65%, #fff, transparent),
+        radial-gradient(1px 1px at  3% 92%, #fff, transparent),
+        radial-gradient(1px 1px at 11% 64%, #fff, transparent),
+        radial-gradient(1px 1px at 47%  3%, #fff, transparent),
+        radial-gradient(1px 1px at 58% 50%, #fff, transparent),
+        radial-gradient(1px 1px at 71% 91%, #fff, transparent),
+        radial-gradient(1px 1px at 88% 14%, #fff, transparent);
+    background-size: 320px 320px;
+    opacity: 0.6;
+    animation: twinkle 6s infinite alternate;
+}
+
+.stars-medium {
+    background-image:
+        radial-gradient(1.5px 1.5px at  9% 22%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 18% 60%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 26% 14%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 34% 78%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 42% 36%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 51%  9%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 58% 55%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 67% 88%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 75% 28%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 83% 68%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 91% 47%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 96% 82%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at  4% 47%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 13% 95%, #fff, transparent);
+    background-size: 480px 480px;
+    opacity: 0.8;
+    animation: twinkle 9s infinite alternate;
+}
+
+.stars-large {
+    background-image:
+        radial-gradient(2px 2px at  8% 28%, #fff, transparent),
+        radial-gradient(2px 2px at 22% 72%, #fff, transparent),
+        radial-gradient(2px 2px at 36% 18%, #fff, transparent),
+        radial-gradient(2px 2px at 49% 60%, #fff, transparent),
+        radial-gradient(2px 2px at 62% 33%, #fff, transparent),
+        radial-gradient(2px 2px at 75% 84%, #fff, transparent),
+        radial-gradient(2px 2px at 88% 12%, #fff, transparent),
+        radial-gradient(2px 2px at 94% 50%, #fff, transparent),
+        radial-gradient(2px 2px at  3% 88%, #fff, transparent);
+    background-size: 660px 660px;
+    opacity: 0.95;
+    animation: twinkle 12s infinite alternate;
+}
+
+@keyframes twinkle {
+    0%   { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* --- Splash layout --------------------------------------------- */
+.splash {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    gap: 1.2rem;
+    text-align: center;
+}
+
+.splash-headline {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    letter-spacing: 0.01em;
+    color: #f5f5f5;
+    text-align: center;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.9);
+
+    opacity: 0;
+    transform: translateY(-8px);
+    animation: fadeInDown 1.2s ease-out 0.4s forwards;
+}
+
+@keyframes fadeInDown {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Globe container (Three.js canvas lives inside) ------------ */
+.globe-container {
+    width: 700px;
+    height: 700px;
+    max-width: 85vw;
+    max-height: 85vw;
+    /* Negative vertical margins collapse the empty transparent canvas
+       area. Top: keep headline tight to the globe.
+       Bottom: less negative — leaves room so the button sits roughly
+       equidistant between the visible atmospheric glow and the page bottom. */
+    margin: -5rem 0 -1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    outline: none;
+    pointer-events: none;      /* clicks pass through the empty canvas area */
+}
+
+.globe-container canvas {
+    display: block;
+    background: transparent !important;
+}
+
+/* --- The nuclear-launch pause button --------------------------- */
+.pause-button {
+    --btn-size: 150px;
+
+    position: relative;
+    width: var(--btn-size);
+    height: var(--btn-size);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+
+    background:
+        radial-gradient(circle at 50% 45%, #c71414 0%, #8f0a0a 55%, #5a0606 85%, #2a0202 100%);
+    box-shadow:
+        /* Metallic bezel ring stack */
+        0 0 0 6px #1a1a1a,
+        0 0 0 9px #4a4a4a,
+        0 0 0 12px #1a1a1a,
+        /* Depth shadow below the button */
+        0 14px 28px rgba(0, 0, 0, 0.8),
+        0 6px 12px rgba(0, 0, 0, 0.7),
+        /* Inner highlight + bottom shade for 3D dome */
+        inset 0 4px 10px rgba(255, 180, 180, 0.45),
+        inset 0 -10px 20px rgba(0, 0, 0, 0.55),
+        /* Red atmospheric glow */
+        0 0 40px rgba(220, 40, 40, 0.5);
+
+    opacity: 0;
+    transform: scale(0.92);
+    animation: fadeInButton 1.1s ease-out 3s forwards;
+
+    transition:
+        transform 0.08s ease,
+        box-shadow 0.12s ease,
+        filter 0.2s ease;
+}
+
+@keyframes fadeInButton {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.pause-button:hover {
+    filter: brightness(1.08);
+}
+
+.pause-button:active,
+.pause-button.pressed {
+    transform: scale(0.96) translateY(2px);
+    box-shadow:
+        0 0 0 6px #1a1a1a,
+        0 0 0 9px #4a4a4a,
+        0 0 0 12px #1a1a1a,
+        0 4px 8px rgba(0, 0, 0, 0.8),
+        inset 0 6px 16px rgba(0, 0, 0, 0.7),
+        inset 0 -2px 6px rgba(255, 150, 150, 0.2),
+        0 0 50px rgba(255, 60, 60, 0.7);
+}
+
+.pause-button:disabled {
+    cursor: default;
+}
+
+/* Pause icon — two vertical bars, centered */
+.pause-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pause-bar {
+    display: block;
+    width: 14px;
+    height: 46px;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ============================================================
+   MISSION PAGE — single-page continuous-scroll site
+   ============================================================ */
+
+html {
+    scroll-behavior: smooth;
+}
+
+.mission-body {
+    background: #000;
+    color: #fff;
+    font-family: 'Spectral', Georgia, serif;
+    min-height: 100vh;
+    position: relative;
+
+    opacity: 0;
+    animation: fadePageIn 1.1s ease-out 0.1s forwards;
+}
+
+@keyframes fadePageIn {
+    to { opacity: 1; }
+}
+
+/* --- Fixed left-side anchor nav -------------------------------- */
+.side-nav {
+    position: fixed;
+    left: 2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.side-nav ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+}
+
+.side-nav a.nav-link {
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    padding-left: 0.9rem;
+    border-left: 2px solid rgba(255, 255, 255, 0.18);
+    transition:
+        color 0.25s ease,
+        border-color 0.25s ease,
+        padding-left 0.25s ease;
+    display: inline-block;
+}
+
+.side-nav a.nav-link:hover {
+    color: #fff;
+    border-left-color: rgba(255, 255, 255, 0.6);
+}
+
+.side-nav a.nav-link.active {
+    color: #fff;
+    border-left-color: #fff;
+    padding-left: 1.1rem;
+    font-weight: 700;
+}
+
+/* --- Main content column --------------------------------------- */
+.mission {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 6rem 1.8rem 8rem;
+    position: relative;
+    z-index: 1;
+}
+
+.page-section {
+    padding: 4rem 0;
+    scroll-margin-top: 3rem;   /* offset for smooth-scroll anchors */
+}
+
+.page-section:first-child {
+    padding-top: 0;
+}
+
+.section-title {
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    color: #fff;
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.01em;
+}
+
+/* --- Section body (rendered from markdown) --------------------- */
+.section-body {
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: 1.75;
+    color: #fff;
+}
+
+.section-body p {
+    margin-bottom: 1.25rem;
+}
+
+.section-body p:last-child {
+    margin-bottom: 0;
+}
+
+.section-body h2 {
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.7rem;
+    margin: 2rem 0 1rem;
+    color: #fff;
+}
+
+.section-body h3 {
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    margin: 1.5rem 0 0.75rem;
+    color: #fff;
+}
+
+.section-body ul,
+.section-body ol {
+    margin: 0 0 1.25rem 1.5rem;
+}
+
+.section-body li {
+    margin-bottom: 0.5rem;
+}
+
+.section-body strong { font-weight: 700; }
+.section-body em     { font-style: italic; }
+
+.section-body a {
+    color: #9cc4ff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.section-body a:hover {
+    color: #fff;
+}
+
+/* --- Responsive: collapse sidebar on narrow screens ------------ */
+@media (max-width: 900px) {
+    .side-nav {
+        position: static;
+        transform: none;
+        padding: 2rem 1.5rem 0;
+    }
+    .side-nav ul {
+        flex-direction: row;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .side-nav a.nav-link {
+        border-left: none;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.18);
+        padding-left: 0;
+        padding-bottom: 0.3rem;
+    }
+    .side-nav a.nav-link.active {
+        padding-left: 0;
+        border-bottom-color: #fff;
+    }
+    .mission {
+        padding-top: 2rem;
+    }
+}

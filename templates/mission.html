@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Press Pause</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="mission-body">
+    <!-- Same starfield as the splash page -->
+    <div class="stars stars-small"></div>
+    <div class="stars stars-medium"></div>
+    <div class="stars stars-large"></div>
+
+    <!-- Fixed sidebar with anchor links -->
+    <nav class="side-nav" aria-label="Sections">
+        <ul>
+            <li><a href="#mission"  class="nav-link" data-target="mission">Mission Statement</a></li>
+            <li><a href="#research" class="nav-link" data-target="research">The Research</a></li>
+            <li><a href="#solution" class="nav-link" data-target="solution">Proposed Solution</a></li>
+        </ul>
+    </nav>
+
+    <main class="mission">
+        <section id="mission" class="page-section">
+            <h1 class="section-title">Mission Statement</h1>
+            <div class="section-body">
+                {{ mission_html|safe }}
+            </div>
+        </section>
+
+        <section id="research" class="page-section">
+            <h1 class="section-title">The Research</h1>
+            <div class="section-body">
+                {{ research_html|safe }}
+            </div>
+        </section>
+
+        <section id="solution" class="page-section">
+            <h1 class="section-title">Proposed Solution</h1>
+            <div class="section-body">
+                {{ solution_html|safe }}
+            </div>
+        </section>
+    </main>
+
+    <script>
+    // Highlight the sidebar link of the section currently in view.
+    (function () {
+        const links = document.querySelectorAll('.nav-link');
+        const sections = Array.from(links).map(link =>
+            document.getElementById(link.dataset.target)
+        );
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    links.forEach(l => l.classList.remove('active'));
+                    const link = document.querySelector(
+                        `.nav-link[data-target="${entry.target.id}"]`
+                    );
+                    if (link) link.classList.add('active');
+                }
+            });
+        }, { rootMargin: '-40% 0px -50% 0px' });
+
+        sections.forEach(s => s && observer.observe(s));
+    })();
+    </script>
+</body>
+</html>
