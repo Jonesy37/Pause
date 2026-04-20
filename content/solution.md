@@ -176,7 +176,7 @@ page. No code changes needed.
 
 <p class="lvl-1">(d) ensure that all third-party contracted engineers hired to assist the committee maintain an active SOC 2 Type II compliance certification.</p>
 
-<h4 class="bill-section-heading">Part 4. Data Center Environmental and Reporting Standards</h4>
+<h4 class="bill-section-heading">Section 4. Data Center Environmental and Reporting Standards</h4>
 
 <p class="lvl-0">(1) Any operator of a data center within the state shall comply with the standards established in this section</p>
 

@@ -71,6 +71,43 @@
         sections.forEach(s => s && observer.observe(s));
     })();
 
+    // Parallax on the starfield: each of the three fixed star layers
+    // shifts its background-position-y as a fraction of scrollY, so
+    // small/distant stars drift slowly and larger/nearer stars move
+    // faster. The radial-gradient tiles repeat, so the field looks
+    // infinite no matter how far you scroll.
+    //
+    // Uses requestAnimationFrame + a passive scroll listener so it
+    // doesn't interfere with touch scrolling or the main thread.
+    (function () {
+        // Honor the system "reduced motion" setting — skip parallax.
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const layers = [
+            { el: document.querySelector('.stars-small'),  rate: 0.15 },
+            { el: document.querySelector('.stars-medium'), rate: 0.30 },
+            { el: document.querySelector('.stars-large'),  rate: 0.45 },
+        ].filter(l => l.el);
+
+        if (!layers.length) return;
+
+        let ticking = false;
+        function update() {
+            const y = window.scrollY || window.pageYOffset;
+            layers.forEach(({ el, rate }) => {
+                el.style.backgroundPositionY = `${-y * rate}px`;
+            });
+            ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(update);
+                ticking = true;
+            }
+        }, { passive: true });
+        update();  // set initial positions on load
+    })();
+
     // Tap-to-toggle for .tip tooltips on touch devices.
     // Desktop hover still works via pure CSS; this just makes the same
     // popups reachable on phones/tablets where :hover never fires.
