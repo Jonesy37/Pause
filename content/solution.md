@@ -184,7 +184,7 @@ page. No code changes needed.
 
 <p class="lvl-1">(a) No later than June 1st of each year, every operator shall submit to the Utah Department of Environmental Quality a report covering the previous calendar year that includes:</p>
 
-<p class="lvl-2">(i) A total annual electricity consumption;</p>
+<p class="lvl-2">(i) <span class="tip">A total annual electricity consumption<span class="tip-body"><a href="https://www.congress.gov/crs-product/R48646" target="_blank" rel="noopener">Data centers and their energy consumption.</a></span></span>;</p>
 
 <p class="lvl-2">(ii) A comprehensive analysis of utilized electricity sources;</p>
 
@@ -196,9 +196,9 @@ page. No code changes needed.
 
 <p class="lvl-0">(3) All new high-consumption data centers shall</p>
 
-<p class="lvl-1">(i) utilize non-consumptive cooling techniques;</p>
+<p class="lvl-1">(i) <span class="tip">utilize non-consumptive cooling techniques<span class="tip-body"><a href="https://engineering.nyu.edu/news/new-method-data-center-cooling-could-dramatically-decrease-electricity-use" target="_blank" rel="noopener">Potential gains from better cooling systems.</a></span></span>;</p>
 
-<p class="lvl-1">(ii) not withdraw water from the Great Salt Lake;</p>
+<p class="lvl-1">(ii) <span class="tip">not withdraw water from the Great Salt Lake<span class="tip-body"><a href="https://www.eesi.org/articles/view/data-centers-and-water-consumption" target="_blank" rel="noopener">Shows data center water consumption.</a></span></span>;</p>
 
 <p class="lvl-1">(iii) source at least 50% of annual electrical consumption from renewable or carbon-free sources by January 1, 2030; and</p>
 
@@ -210,7 +210,7 @@ page. No code changes needed.
 
 <p class="lvl-0">(2) Any application for a siting permit shall include:</p>
 
-<p class="lvl-1">(a) an environmental impact assessment addressing projected water consumption, electrical demand, and greenhouse gas emissions;</p>
+<p class="lvl-1">(a) <span class="tip">an environmental impact assessment addressing projected water consumption, electrical demand, and greenhouse gas emissions<span class="tip-body"><a href="https://www.lincolninst.edu/publications/land-lines-magazine/articles/land-water-impacts-data-centers/" target="_blank" rel="noopener">The effects of data centers on the environment.</a></span></span>;</p>
 
 <p class="lvl-1">(b) a water availability assessment study prepared in coordination with the Division of Water Resources, ensuring the facility won't impair the water supply of any municipality, agricultural, or ecological system within the affected area; and</p>
 
@@ -220,9 +220,9 @@ page. No code changes needed.
 
 <p class="lvl-1">(a) Publicly publish evidence of the permit request;</p>
 
-<p class="lvl-1">(b) Provide a public comment period of no fewer than 30 days; and</p>
+<p class="lvl-1">(b) <span class="tip">Provide a public comment period of no fewer than 30 days<span class="tip-body"><a href="https://www.environmentalhealthproject.org/post/the-dangers-of-data-centers" target="_blank" rel="noopener">Further shows the effects of data centers on the environment and local community.</a></span></span>; and</p>
 
-<p class="lvl-1">(c) Hold at least one public hearing in the county in which the proposed facility will be located.</p>
+<p class="lvl-1">(c) <span class="tip">Hold at least one public hearing in the county in which the proposed facility will be located<span class="tip-body"><a href="https://sites.uab.edu/humanrights/2025/10/02/construction-and-consequences-the-human-impacts-of-artificial-intelligence-data-centers/" target="_blank" rel="noopener">The effects of data centers on local communities and how they oppress certain communities.</a></span></span>.</p>
 
 <p class="lvl-0">(4) Each operator of a data center used to train or operate an artificial intelligence system shall:</p>
 
