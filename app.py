@@ -6,12 +6,13 @@ Advocates for a pause on frontier AI development while we confront
 the risks of misalignment, loss of human life, and sustainability.
 
 The splash page greets visitors with a spinning Earth and a red
-"pause" button; pressing it enters the site at the mission page,
-which is a continuous-scroll document with three sections:
-Mission Statement, The Research, Proposed Solution.
+"pause" button; pressing it enters the mission page — a single
+continuous-scroll document with a title, tagline, two content
+sections (Mission Statement, Proposed Solution), and an authors
+block at the bottom.
 
-Section text lives in content/*.md — editable as plain text with
-no code changes needed. Save the file, refresh the page, done.
+All text lives in content/ — editable as plain text with no code
+changes needed. Save the file, refresh the page, done.
 """
 
 import re
@@ -46,6 +47,17 @@ def load_section(name: str) -> str:
     )
 
 
+def load_line(name: str, default: str = "") -> str:
+    """
+    Load content/<name>.txt as a single line of plain text.
+    Used for short fields like the page title and tagline.
+    """
+    txt_path = CONTENT_DIR / f"{name}.txt"
+    if not txt_path.exists():
+        return default
+    return txt_path.read_text(encoding="utf-8").strip()
+
+
 @app.route("/")
 def splash():
     """Splash page — spinning globe + red pause button."""
@@ -55,18 +67,23 @@ def splash():
 @app.route("/mission")
 def mission():
     """
-    Single-page continuous-scroll site: mission / research / solution.
-    All section text is read from the content/ folder on every request,
+    Single-page continuous-scroll site.
+    All text is re-read from the content/ folder on every request,
     so edits show up on a page refresh with no restart needed.
     """
     return render_template(
         "mission.html",
+        page_title=load_line("title", "Press Pause"),
+        page_tagline=load_line("tagline", ""),
         mission_html=load_section("mission"),
-        research_html=load_section("research"),
         solution_html=load_section("solution"),
+        authors_html=load_section("authors"),
     )
 
 
 if __name__ == "__main__":
+    # Local-dev entrypoint only. On Render, gunicorn imports the `app`
+    # object directly and this block never runs — so debug=True here
+    # only affects your machine, giving you template auto-reload.
     port = int(os.environ.get("PORT", 5001))
-    app.run(debug=False, host="0.0.0.0", port=port)
+    app.run(debug=True, host="0.0.0.0", port=port)

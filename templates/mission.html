@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Press Pause</title>
+    <title>{{ page_title }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -19,32 +19,33 @@
     <nav class="side-nav" aria-label="Sections">
         <ul>
             <li><a href="#mission"  class="nav-link" data-target="mission">Mission Statement</a></li>
-            <li><a href="#research" class="nav-link" data-target="research">The Research</a></li>
             <li><a href="#solution" class="nav-link" data-target="solution">Proposed Solution</a></li>
         </ul>
     </nav>
 
     <main class="mission">
+        <header class="page-header">
+            <h1 class="page-title">{{ page_title }}</h1>
+            {% if page_tagline %}<p class="page-tagline">{{ page_tagline }}</p>{% endif %}
+        </header>
+
         <section id="mission" class="page-section">
-            <h1 class="section-title">Mission Statement</h1>
+            <h2 class="section-title">Mission Statement</h2>
             <div class="section-body">
                 {{ mission_html|safe }}
             </div>
         </section>
 
-        <section id="research" class="page-section">
-            <h1 class="section-title">The Research</h1>
-            <div class="section-body">
-                {{ research_html|safe }}
-            </div>
-        </section>
-
         <section id="solution" class="page-section">
-            <h1 class="section-title">Proposed Solution</h1>
+            <h2 class="section-title">Proposed Solution</h2>
             <div class="section-body">
                 {{ solution_html|safe }}
             </div>
         </section>
+
+        <footer class="page-footer">
+            {{ authors_html|safe }}
+        </footer>
     </main>
 
     <script>

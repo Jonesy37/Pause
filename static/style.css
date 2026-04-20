@@ -337,23 +337,85 @@ html {
     z-index: 1;
 }
 
+/* --- Page header (title + tagline) ----------------------------- */
+.page-header {
+    padding-bottom: 4rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.page-title {
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+}
+
+.page-tagline {
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.5;
+    max-width: 620px;
+    margin: 0 auto;
+}
+
 .page-section {
     padding: 4rem 0;
     scroll-margin-top: 3rem;   /* offset for smooth-scroll anchors */
 }
 
-.page-section:first-child {
-    padding-top: 0;
+.page-section:first-of-type {
+    padding-top: 2rem;
 }
 
 .section-title {
     font-family: 'Spectral', Georgia, serif;
     font-weight: 800;
-    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-size: clamp(2.2rem, 4.5vw, 3.4rem);
     color: #fff;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
     letter-spacing: -0.01em;
 }
+
+/* --- Footer with author credits -------------------------------- */
+.page-footer {
+    margin-top: 5rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+}
+
+.page-footer h2 {
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.page-footer p {
+    margin-bottom: 0.5rem;
+}
+
+.page-footer p:last-child {
+    margin-bottom: 0;
+}
+
+.page-footer em { font-style: italic; }
+.page-footer strong { font-weight: 700; color: #fff; }
 
 /* --- Section body (rendered from markdown) --------------------- */
 .section-body {
@@ -410,17 +472,23 @@ html {
     color: #fff;
 }
 
-/* --- Responsive: collapse sidebar on narrow screens ------------ */
-@media (max-width: 900px) {
+/* --- Responsive: collapse sidebar before it can overlap text ---
+   At widths <= 1260px, the centered 760px content column gets close
+   enough to the fixed left sidebar that they overlap. Switch the
+   sidebar to a horizontal top-nav below that threshold. */
+@media (max-width: 1260px) {
     .side-nav {
         position: static;
         transform: none;
         padding: 2rem 1.5rem 0;
+        display: flex;
+        justify-content: center;
     }
     .side-nav ul {
         flex-direction: row;
-        gap: 1.5rem;
+        gap: 1.8rem;
         flex-wrap: wrap;
+        justify-content: center;
     }
     .side-nav a.nav-link {
         border-left: none;
@@ -433,6 +501,6 @@ html {
         border-bottom-color: #fff;
     }
     .mission {
-        padding-top: 2rem;
+        padding-top: 2.5rem;
     }
 }
