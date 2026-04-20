@@ -14,4 +14,4 @@ You don't need to touch any code. Save the file and refresh the page.
 
 ## Authors
 
-This project was created by *[Your names here]* for the University course *AI: Problems and Possibilities*.
+This project was created by *Riley Harlan, Logan Jones and Crete Lowe* for the Weber State University course *AI: Problems and Possibilities*.

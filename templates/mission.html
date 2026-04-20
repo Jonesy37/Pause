@@ -18,8 +18,8 @@
     <!-- Fixed sidebar with anchor links -->
     <nav class="side-nav" aria-label="Sections">
         <ul>
-            <li><a href="#mission"  class="nav-link" data-target="mission">Mission Statement</a></li>
-            <li><a href="#solution" class="nav-link" data-target="solution">Proposed Solution</a></li>
+            <li><a href="#mission"  class="nav-link" data-target="mission">{{ mission_title }}</a></li>
+            <li><a href="#solution" class="nav-link" data-target="solution">{{ solution_title }}</a></li>
         </ul>
     </nav>
 
@@ -30,14 +30,14 @@
         </header>
 
         <section id="mission" class="page-section">
-            <h2 class="section-title">Mission Statement</h2>
+            <h2 class="section-title">{{ mission_title }}</h2>
             <div class="section-body">
                 {{ mission_html|safe }}
             </div>
         </section>
 
         <section id="solution" class="page-section">
-            <h2 class="section-title">Proposed Solution</h2>
+            <h2 class="section-title">{{ solution_title }}</h2>
             <div class="section-body">
                 {{ solution_html|safe }}
             </div>

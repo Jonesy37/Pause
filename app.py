@@ -75,6 +75,8 @@ def mission():
         "mission.html",
         page_title=load_line("title", "Press Pause"),
         page_tagline=load_line("tagline", ""),
+        mission_title=load_line("mission_title", "Mission Statement"),
+        solution_title=load_line("solution_title", "Proposed Solution"),
         mission_html=load_section("mission"),
         solution_html=load_section("solution"),
         authors_html=load_section("authors"),
