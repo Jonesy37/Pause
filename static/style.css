@@ -472,6 +472,138 @@ html {
     color: #fff;
 }
 
+/* --- Hover-triggered tooltips ----------------------------------
+   Usage in any content .md file:
+
+     <span class="tip">visible text<span class="tip-body">pop-up text</span></span>
+
+   The outer span is what appears on the page (with a subtle
+   dotted underline so readers know to hover). The inner
+   .tip-body is the pop-up — hidden until hover on desktop
+   or tap on mobile. */
+.tip {
+    position: relative;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.55);
+    cursor: help;
+}
+
+.tip-body {
+    /* Hidden by default */
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    width: max-content;
+    max-width: min(360px, 90vw);
+
+    background: #0a0a0a;
+    color: #fff;
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.55;
+    text-align: left;
+    white-space: normal;
+
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 6px;
+    box-shadow:
+        0 14px 34px rgba(0, 0, 0, 0.85),
+        0 6px 14px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(0, 0, 0, 0.4);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease,
+        visibility 0.18s;
+    z-index: 50;
+}
+
+/* Little arrow pointing down at the underlined word.
+   Two triangles stacked: the outer one matches the border,
+   the inner one matches the body — gives a clean bordered arrow. */
+.tip-body::before,
+.tip-body::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 7px solid transparent;
+}
+.tip-body::before {
+    top: 100%;
+    border-top-color: rgba(255, 255, 255, 0.22);
+}
+.tip-body::after {
+    top: 100%;
+    margin-top: -1px;
+    border-width: 6px;
+    border-top-color: #0a0a0a;
+}
+
+/* Reveal on hover (desktop), keyboard focus, or .open (tapped on mobile) */
+.tip:hover .tip-body,
+.tip:focus-within .tip-body,
+.tip.open .tip-body {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/* Links inside pop-ups — readable on the black background, and
+   long URLs wrap instead of overflowing the box. */
+.tip-body a {
+    color: #a8c8ff;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    word-break: break-word;
+}
+.tip-body a:hover {
+    color: #fff;
+}
+
+/* --- "The Bill" legal-document formatting ---------------------
+   Centered bold section headings + indented legal numbering
+   ((1) -> (a) -> (i)). Lives inside .section-body so it inherits
+   font-family, color, and readable line-height. */
+.bill {
+    line-height: 1.7;
+}
+
+.bill .bill-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.02em;
+    margin: 0.5rem 0 1.5rem;
+    color: #fff;
+}
+
+.bill .bill-section-heading {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 2.2rem 0 1rem;
+    color: #fff;
+}
+
+.bill p.lvl-0 { margin: 0.6rem 0; }
+.bill p.lvl-1 { margin: 0.6rem 0 0.6rem 2.5rem; }
+.bill p.lvl-2 { margin: 0.6rem 0 0.6rem 5rem; }
+
+/* On narrow screens, pull the indents in so long lines don't
+   crowd off the right edge. */
+@media (max-width: 600px) {
+    .bill p.lvl-1 { margin-left: 1.4rem; }
+    .bill p.lvl-2 { margin-left: 2.8rem; }
+}
+
 /* --- Responsive: collapse sidebar before it can overlap text ---
    At widths <= 1260px, the centered 760px content column gets close
    enough to the fixed left sidebar that they overlap. Switch the

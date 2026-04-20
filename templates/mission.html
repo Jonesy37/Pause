@@ -70,6 +70,32 @@
 
         sections.forEach(s => s && observer.observe(s));
     })();
+
+    // Tap-to-toggle for .tip tooltips on touch devices.
+    // Desktop hover still works via pure CSS; this just makes the same
+    // popups reachable on phones/tablets where :hover never fires.
+    (function () {
+        const tips = document.querySelectorAll('.tip');
+        tips.forEach(el => {
+            el.addEventListener('click', (e) => {
+                // Don't stop link clicks — readers should still be able
+                // to follow <a> tags inside the pop-up body.
+                if (e.target.closest('a')) return;
+                // Tapping inside the open pop-up (but not on a link)
+                // shouldn't toggle it closed — let readers read.
+                if (e.target.closest('.tip-body')) {
+                    e.stopPropagation();
+                    return;
+                }
+                e.stopPropagation();
+                tips.forEach(o => { if (o !== el) o.classList.remove('open'); });
+                el.classList.toggle('open');
+            });
+        });
+        document.addEventListener('click', () => {
+            tips.forEach(o => o.classList.remove('open'));
+        });
+    })();
     </script>
 </body>
 </html>
