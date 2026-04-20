@@ -13,6 +13,8 @@ You don't need to touch any code. Save the file and refresh the page.
 ========================================================================
 -->
 
-Replace this paragraph with your mission statement. Anything you type here will appear on the website under the "Mission Statement" heading.
+We believe that the safe and sustainable training, development and application of artificial intelligence systems, along with the infrastructure required to support them, is not merely important, it is non-negotiable. For these reasons, we propose the **Artificial Intelligence Safety Oversight Act**, which establishes the implementation of a temporary "pause," or moratorium, on all current development of artificial intelligence systems and infrastructure projects until sufficient safety standards have been met.
 
-You can write as many paragraphs as you want. Just leave a blank line between them and they'll be spaced correctly on the page.
+In addition, this bill creates the Utah Committee for Artificial Intelligence Safety Oversight, which, through their expertise, will conduct intensive audits on all artificial intelligence systems in order to determine whether companies have reached the required threshold of safety and ethical practice. 
+
+We believe that these measures, while drastic, will protect both citizens and the state's environment from unsafe or misaligned AI system behavior, and associated harms, while maintaining human autonomy and control over such systems.
