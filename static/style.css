@@ -487,6 +487,20 @@ html {
     cursor: help;
 }
 
+/* Invisible hover bridge — fills the gap between the underlined
+   text and the pop-up above it so the mouse can traverse into the
+   pop-up (e.g. to click a link) without hover lapsing. Covers the
+   full 12px gap plus a 4px overlap into the pop-up edge. */
+.tip::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: -10px;
+    right: -10px;
+    height: 18px;
+    /* No background — just a hoverable hit area. */
+}
+
 .tip-body {
     /* Hidden by default */
     position: absolute;
@@ -521,6 +535,10 @@ html {
         opacity 0.18s ease,
         transform 0.18s ease,
         visibility 0.18s;
+    /* Stay visible 250ms after hover ends — gives the mouse time
+       to travel into the pop-up or to a link inside it. Showing
+       is still instant (see the hover rule below). */
+    transition-delay: 0.25s;
     z-index: 50;
 }
 
@@ -546,7 +564,9 @@ html {
     border-top-color: #0a0a0a;
 }
 
-/* Reveal on hover (desktop), keyboard focus, or .open (tapped on mobile) */
+/* Reveal on hover (desktop), keyboard focus, or .open (tapped on mobile).
+   transition-delay: 0s overrides the 0.25s close delay — showing is
+   instant, only the hide has a grace period. */
 .tip:hover .tip-body,
 .tip:focus-within .tip-body,
 .tip.open .tip-body {
@@ -554,6 +574,7 @@ html {
     visibility: visible;
     transform: translateX(-50%) translateY(0);
     pointer-events: auto;
+    transition-delay: 0s;
 }
 
 /* Links inside pop-ups — readable on the black background, and
