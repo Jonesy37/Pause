@@ -27,8 +27,6 @@
         </button>
     </main>
 
-    <audio id="pause-audio" src="{{ url_for('static', filename='audio/thatwaseasy.m4a') }}" preload="auto"></audio>
-
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script>
     // Shared state between the Three.js scene and the click handler
@@ -204,30 +202,10 @@
         noise.stop(t1);
     }
 
-    // ===== Button press → power down → zoom → voice → mission =====
+    // ===== Button press → power down → fade to mission ============
     (function () {
         const button = document.querySelector('.pause-button');
-        const audio  = document.getElementById('pause-audio');
         let pressed  = false;
-
-        // Easing — slow start, fast finish so the zoom "accelerates in"
-        const easeInCubic = t => t * t * t;
-
-        function animateZoom(durationMs) {
-            const cam = PressPause.camera;
-            if (!cam) return;
-            const startZ  = PressPause.startZ;
-            const endZ    = 1.05;     // just outside the globe surface (radius 1)
-            const startMs = performance.now();
-
-            function step(now) {
-                const t = Math.min(1, (now - startMs) / durationMs);
-                const e = easeInCubic(t);
-                cam.position.z = startZ + (endZ - startZ) * e;
-                if (t < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
-        }
 
         button.addEventListener('click', () => {
             if (pressed) return;
@@ -235,22 +213,17 @@
             button.classList.add('pressed');
             button.disabled = true;
 
-            // t = 0   :  powering-down sound starts (5s long)
+            // t = 0     : powering-down sound starts (5s — tail carries
+            //             over into the mission page load)
             playPowerDown(5);
 
-            // t = 2s  :  start the 3-second zoom into the globe
-            setTimeout(() => animateZoom(3000), 2000);
-
-            // t = 5s  :  zoom done — play the voice and start fading out
+            // t = 1.8s  : fade the splash to black
             setTimeout(() => {
-                audio.currentTime = 0;
-                const p = audio.play();
-                if (p) p.catch(() => {});
                 document.body.classList.add('fade-out');
-            }, 5000);
+            }, 1800);
 
-            // t = ~6.2s : voice has played — navigate to the mission page
-            setTimeout(() => { window.location.href = '/mission'; }, 6200);
+            // t = 3.0s  : navigate to the mission page
+            setTimeout(() => { window.location.href = '/mission'; }, 3000);
         });
     })();
     </script>
