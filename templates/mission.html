@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=horizon1">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
 </head>
 <body class="mission-body">
@@ -103,25 +103,28 @@
             </div>
         </section>
 
-        <!-- Earth horizon: a large public-domain NASA photograph of
-             Earth from space (Apollo 17, "Blue Marble," 1972), anchored
-             at the bottom of the page so only the top half of the disc
-             is visible. Reads as if the reader is in orbit looking down
-             at Earth's curve. The photo's own atmospheric rim fades
-             into the page's pure-black background with no sharp edge;
-             a gentle radial mask hides any JPEG block artifacts at
-             the very corners. The Authors credits sit overlaid on top
-             with a soft dark lens + drop shadow for readability. -->
-        <section class="earth-horizon" aria-label="Authors">
-            <img class="earth-horizon__img"
-                 src="{{ url_for('static', filename='images/earth_photo.jpg') }}"
-                 alt=""
-                 aria-hidden="true">
-            <footer class="page-footer earth-horizon__credits">
-                {{ authors_html|safe }}
-            </footer>
-        </section>
     </main>
+
+    <!-- Earth horizon: a large public-domain NASA photograph of Earth
+         from space (Apollo 17, "Blue Marble," 1972), anchored at the
+         bottom of the page so only the top half of the disc is visible.
+         Reads as if the reader is in orbit looking down at Earth's
+         curve. Lives outside <main class="mission"> so it isn't clipped
+         by the 760 px centered text column; it spans the full viewport
+         width. The photo's own atmospheric rim fades into the page's
+         pure-black background with no sharp edge; a gentle radial mask
+         hides any JPEG block artifacts at the very corners. The Authors
+         credits sit overlaid on top with a soft dark lens + drop shadow
+         for readability. -->
+    <section class="earth-horizon" aria-label="Authors">
+        <img class="earth-horizon__img"
+             src="{{ url_for('static', filename='images/earth_photo.jpg') }}"
+             alt=""
+             aria-hidden="true">
+        <footer class="page-footer earth-horizon__credits">
+            {{ authors_html|safe }}
+        </footer>
+    </section>
 
     <!-- The mission page no longer needs Three.js — the old rotating
          mini-globe was replaced by a static NASA photograph. Splash
