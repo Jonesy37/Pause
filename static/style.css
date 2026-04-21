@@ -396,7 +396,10 @@ html {
 .mission {
     max-width: 760px;
     margin: 0 auto;
-    padding: 6rem 1.8rem 8rem;
+    /* Bottom padding is small because the Earth horizon below lives
+       outside <main> and provides its own visual closer. A generous
+       bottom gap here would just be empty black space. */
+    padding: 6rem 1.8rem 2rem;
     position: relative;
     z-index: 1;
 }
@@ -508,9 +511,10 @@ html {
    guaranteed high-contrast. */
 .earth-horizon {
     position: relative;
-    /* Authors footer above already supplies its own top-margin and
-       border, so a small gap here is all the separation we need. */
-    margin-top: 2rem;
+    /* No extra top-margin — .mission's small bottom padding (2rem)
+       already provides enough breathing room between the Authors
+       footer and the Earth image. */
+    margin-top: 0;
     /* Container height == the visible top half of the Earth disc.
        The <img> below is rendered at width ~= 2 * container height
        with its top edge pinned to top:0 of the container, so exactly
