@@ -430,20 +430,6 @@ html {
     margin: 0 auto;
 }
 
-/* Bundle F: small pause-symbol mark (‖) tucked beside the page title.
-   Echoes the splash-page pause button in miniature — red, roughly
-   half the cap-height of the title, baseline-aligned. */
-.title-mark {
-    color: var(--accent-red);
-    font-weight: 500;
-    font-size: 0.55em;           /* relative to .page-title */
-    letter-spacing: -0.05em;
-    margin-left: 0.55rem;
-    vertical-align: 0.35em;      /* nudge up toward cap-line */
-    display: inline-block;
-    opacity: 0.9;
-}
-
 /* Utah State Capitol photo under the page header.
    Constrained max-width, grayscale filter (so the source file can
    stay color for future remixes), subtle border + shadow. Caption
