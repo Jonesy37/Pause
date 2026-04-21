@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
 </head>
 <body class="mission-body">
     <!-- Same starfield as the splash page -->
@@ -19,14 +20,38 @@
     <nav class="side-nav" aria-label="Sections">
         <ul>
             <li><a href="#mission"  class="nav-link" data-target="mission">{{ mission_title }}</a></li>
-            <li><a href="#solution" class="nav-link" data-target="solution">{{ solution_title }}</a></li>
+            <li>
+                <a href="#solution" class="nav-link" data-target="solution">{{ solution_title }}</a>
+                <!-- Sub-anchors into each of the 5 sections of the bill.
+                     Kept in sync by hand with the <h4 id="bill-section-N">
+                     tags in content/solution.md. -->
+                <ul class="side-subnav">
+                    <li><a href="#bill-section-1" class="sub-link" data-target="bill-section-1">1. General Provisions</a></li>
+                    <li><a href="#bill-section-2" class="sub-link" data-target="bill-section-2">2. Safety Standards</a></li>
+                    <li><a href="#bill-section-3" class="sub-link" data-target="bill-section-3">3. Oversight Committee</a></li>
+                    <li><a href="#bill-section-4" class="sub-link" data-target="bill-section-4">4. Environmental Standards</a></li>
+                    <li><a href="#bill-section-5" class="sub-link" data-target="bill-section-5">5. Siting &amp; Security</a></li>
+                </ul>
+            </li>
         </ul>
     </nav>
 
     <main class="mission">
         <header class="page-header">
-            <h1 class="page-title">{{ page_title }}</h1>
+            <h1 class="page-title">{{ page_title }}<span class="title-mark" aria-hidden="true">&#8214;</span></h1>
             {% if page_tagline %}<p class="page-tagline">{{ page_tagline }}</p>{% endif %}
+
+            <figure class="capitol-photo">
+                <img src="{{ url_for('static', filename='images/utah-state-capitol.jpg') }}"
+                     alt="The Utah State Capitol building in Salt Lake City, shown in black and white."
+                     loading="lazy">
+                <figcaption>
+                    Utah State Capitol, Salt Lake City &middot;
+                    Photo by Andrew Smith,
+                    <a href="https://www.flickr.com/photos/andrewasmith/7631480380/" target="_blank" rel="noopener">via Flickr</a>
+                    (<a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank" rel="noopener">CC&nbsp;BY-SA&nbsp;2.0</a>)
+                </figcaption>
+            </figure>
         </header>
 
         <section id="mission" class="page-section">
@@ -38,6 +63,20 @@
 
         <section id="solution" class="page-section">
             <h2 class="section-title">{{ solution_title }}</h2>
+
+            <!-- PDF download lives just under the section title so it's
+                 easy to find without pushing the bill text down far. -->
+            <p class="bill-download">
+                <a class="download-btn" href="{{ url_for('bill_pdf') }}" download>
+                    <svg class="download-btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v11.5M12 14.5l4-4M12 14.5l-4-4M5 17.5v1A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5v-1"
+                              fill="none" stroke="currentColor" stroke-width="1.75"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Download PDF</span>
+                </a>
+            </p>
+
             <div class="section-body">
                 {{ solution_html|safe }}
             </div>
@@ -49,26 +88,83 @@
     </main>
 
     <script>
-    // Highlight the sidebar link of the section currently in view.
+    // Scroll-spy for the sidebar. Highlights the main section (Our
+    // Position / The Bill) currently in view, and — once inside The
+    // Bill — the nearest of the five sub-section headings. Rather
+    // than using IntersectionObserver (which struggles when a reader
+    // is parked mid-section and no heading is in the trigger band),
+    // this picks the heading whose top has just passed a horizontal
+    // line ~30% down the viewport on each scroll tick.
     (function () {
-        const links = document.querySelectorAll('.nav-link');
-        const sections = Array.from(links).map(link =>
-            document.getElementById(link.dataset.target)
-        );
+        const subNav = document.querySelector('.side-subnav');
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    links.forEach(l => l.classList.remove('active'));
-                    const link = document.querySelector(
-                        `.nav-link[data-target="${entry.target.id}"]`
-                    );
+        // Build anchor -> link tables for both tiers.
+        const mainLinks = Array.from(document.querySelectorAll('.nav-link'));
+        const subLinks  = Array.from(document.querySelectorAll('.sub-link'));
+        const allLinks  = [...mainLinks, ...subLinks];
+        const linkById  = new Map();
+        allLinks.forEach(a => linkById.set(a.dataset.target, a));
+
+        // The actual elements, split by tier so we can run the
+        // "closest heading above the line" logic separately.
+        const mainTargets = mainLinks
+            .map(a => document.getElementById(a.dataset.target))
+            .filter(Boolean);
+        const subTargets = subLinks
+            .map(a => document.getElementById(a.dataset.target))
+            .filter(Boolean);
+
+        function pickActive(elements, lineY) {
+            // The active heading is the last one whose top is at or
+            // above the horizontal line. If the reader hasn't reached
+            // the first heading yet, return null — nothing active.
+            let active = null;
+            for (const el of elements) {
+                if (el.getBoundingClientRect().top <= lineY) active = el;
+                else break;
+            }
+            return active;
+        }
+
+        let ticking = false;
+        function update() {
+            const lineY = window.innerHeight * 0.30;
+
+            // Clear all active states.
+            allLinks.forEach(l => l.classList.remove('active'));
+
+            // Main tier.
+            const activeMain = pickActive(mainTargets, lineY);
+            if (activeMain) {
+                const link = linkById.get(activeMain.id);
+                if (link) link.classList.add('active');
+            }
+
+            // Sub tier — only shown when The Bill's section is on screen.
+            const solution = document.getElementById('solution');
+            const solRect  = solution ? solution.getBoundingClientRect() : null;
+            const solVisible = solRect
+                && solRect.bottom > 0
+                && solRect.top < window.innerHeight;
+            if (subNav) subNav.classList.toggle('expanded', !!solVisible);
+
+            if (solVisible) {
+                const activeSub = pickActive(subTargets, lineY);
+                if (activeSub) {
+                    const link = linkById.get(activeSub.id);
                     if (link) link.classList.add('active');
                 }
-            });
-        }, { rootMargin: '-40% 0px -50% 0px' });
+            }
 
-        sections.forEach(s => s && observer.observe(s));
+            ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) { requestAnimationFrame(update); ticking = true; }
+        }, { passive: true });
+        window.addEventListener('resize', () => {
+            if (!ticking) { requestAnimationFrame(update); ticking = true; }
+        });
+        update();
     })();
 
     // Parallax on the starfield: each of the three fixed star layers
@@ -106,6 +202,49 @@
             }
         }, { passive: true });
         update();  // set initial positions on load
+    })();
+
+    // Auto-flip tooltips that would spill off the right edge.
+    // The default position is to the right of the underlined word;
+    // if there isn't enough room there, add .tip-left to flip it to
+    // the opposite side. Runs once on load and again on resize.
+    (function () {
+        const tips = document.querySelectorAll('.tip');
+        function measure() {
+            tips.forEach(el => {
+                const body = el.querySelector('.tip-body');
+                if (!body) return;
+                // Temporarily make the pop-up measurable without
+                // actually showing it to the user.
+                const prev = {
+                    visibility: body.style.visibility,
+                    opacity: body.style.opacity,
+                    display: body.style.display,
+                };
+                body.style.visibility = 'hidden';
+                body.style.opacity = '0';
+                body.style.display = 'block';
+
+                el.classList.remove('tip-left');
+                const wordRight = el.getBoundingClientRect().right;
+                const bodyWidth = body.getBoundingClientRect().width;
+                const gap = 12; // matches --tip gap in CSS
+                const margin = 16;
+                if (wordRight + gap + bodyWidth + margin > window.innerWidth) {
+                    el.classList.add('tip-left');
+                }
+
+                body.style.visibility = prev.visibility;
+                body.style.opacity = prev.opacity;
+                body.style.display = prev.display;
+            });
+        }
+        measure();
+        let t;
+        window.addEventListener('resize', () => {
+            clearTimeout(t);
+            t = setTimeout(measure, 120);
+        });
     })();
 
     // Tap-to-toggle for .tip tooltips on touch devices.

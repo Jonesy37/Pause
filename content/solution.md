@@ -40,7 +40,7 @@ page. No code changes needed.
 
 <h3 class="bill-title">ARTIFICIAL INTELLIGENCE SAFETY OVERSIGHT ACT</h3>
 
-<h4 class="bill-section-heading">Section 1. General Provisions</h4>
+<h4 id="bill-section-1" class="bill-section-heading">Section 1. General Provisions</h4>
 
 <p class="lvl-0">(1) As used in this chapter:</p>
 
@@ -82,7 +82,7 @@ page. No code changes needed.
 
 <p class="lvl-2">(ii) consumes 50 million gallons or more annually for operational purposes</p>
 
-<h4 class="bill-section-heading">Section 2. Safety Standards</h4>
+<h4 id="bill-section-2" class="bill-section-heading">Section 2. Safety Standards</h4>
 
 <p class="lvl-0">(1) All developers of large artificial intelligence systems must adhere to strict safety guidelines before development is permitted.</p>
 
@@ -126,7 +126,7 @@ page. No code changes needed.
 
 <p class="lvl-0">(4) Any artificial intelligence model that does not meet these standards shall be prohibited from further development until such a time in which it meets these standards</p>
 
-<h4 class="bill-section-heading">Section 3. Utah Committee for Artificial Intelligence Safety Oversight</h4>
+<h4 id="bill-section-3" class="bill-section-heading">Section 3. Utah Committee for Artificial Intelligence Safety Oversight</h4>
 
 <p class="lvl-0">(1) There is established the Utah Committee for Artificial Intelligence Safety Oversight, to be administered by the Office of Artificial Intelligence Policy.</p>
 
@@ -176,7 +176,7 @@ page. No code changes needed.
 
 <p class="lvl-1">(d) ensure that all third-party contracted engineers hired to assist the committee maintain an active SOC 2 Type II compliance certification.</p>
 
-<h4 class="bill-section-heading">Section 4. Data Center Environmental and Reporting Standards</h4>
+<h4 id="bill-section-4" class="bill-section-heading">Section 4. Data Center Environmental and Reporting Standards</h4>
 
 <p class="lvl-0">(1) Any operator of a data center within the state shall comply with the standards established in this section</p>
 
@@ -204,7 +204,7 @@ page. No code changes needed.
 
 <p class="lvl-1">(iv) source 100% of annual electrical consumption from renewable or carbon-free sources by January 1, 2035.</p>
 
-<h4 class="bill-section-heading">Section 5. Data Center Siting, Zoning, and Security</h4>
+<h4 id="bill-section-5" class="bill-section-heading">Section 5. Data Center Siting, Zoning, and Security</h4>
 
 <p class="lvl-0">(1) No high-consumption data center shall commence construction within the state without first obtaining a siting permit issued by the Department of Environmental Quality</p>
 
