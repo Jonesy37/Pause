@@ -50,9 +50,9 @@ page. No code changes needed.
 
 <p class="lvl-2">(i) whose total development cost exceeds $10,000,000;</p>
 
-<p class="lvl-2">(ii) <span class="tip">which utilizes over 10,000,000,000 parameters<span class="tip-body"><span class="cp">Many of the most critical capabilities emerge close to these thresholds, such as self-replication.</span><span class="cp"><a href="https://arxiv.org/abs/2412.12140" target="_blank" rel="noopener">arXiv 2412.12140 — Frontier AI systems have surpassed the self-replicating red line</a></span><span class="cp">Another example of dangerous capabilities with even fewer parameters:</span><span class="cp"><a href="https://arxiv.org/abs/2303.11156" target="_blank" rel="noopener">arXiv 2303.11156 — Can AI-Generated Text be Reliably Detected?</a></span></span></span>;</p>
+<p class="lvl-2">(ii) <span class="tip">which utilizes over 10,000,000,000 parameters, whether contained within a single discrete model or multiple models operating in a coordinated system.<span class="tip-body"><span class="cp">Many of the most critical capabilities emerge close to these thresholds, such as self-replication.</span><span class="cp"><a href="https://arxiv.org/abs/2412.12140" target="_blank" rel="noopener">arXiv 2412.12140 — Frontier AI systems have surpassed the self-replicating red line</a></span><span class="cp">Another example of dangerous capabilities with even fewer parameters:</span><span class="cp"><a href="https://arxiv.org/abs/2303.11156" target="_blank" rel="noopener">arXiv 2303.11156 — Can AI-Generated Text be Reliably Detected?</a></span></span></span>;</p>
 
-<p class="lvl-2">(iii) <span class="tip">which was trained using a quantity of computing power greater than 10^24 integer or floating-point operations<span class="tip-body"><a href="https://legiscan.com/CA/text/SB1047/id/2919384" target="_blank" rel="noopener">A standard definition from California's SB-1047 AI bill.</a></span></span>; or</p>
+<p class="lvl-2">(iii) <span class="tip">which requires a cumulative quantity of computing power greater than 10^24 operations to train and fine-tune, regardless of whether the computing power was expended by a single entity or multiple subsequent developers.<span class="tip-body"><a href="https://legiscan.com/CA/text/SB1047/id/2919384" target="_blank" rel="noopener">A standard definition from California's SB-1047 AI bill.</a></span></span>; or</p>
 
 <p class="lvl-2">(iv) which could reasonably be expected to have similar performance on benchmarks commonly used to quantify the performance of state-of-the-art foundation models</p>
 
@@ -80,7 +80,7 @@ page. No code changes needed.
 
 <p class="lvl-2">(i) has an electrical capacity of 10 megawatts; or</p>
 
-<p class="lvl-2">(ii) consumes 50 million gallons or more annually for operational purposes</p>
+<p class="lvl-2">(ii) requiring the gross annual withdrawal of 50 million gallons of water, regardless of subsequent discharge or reclamation.</p>
 
 <h4 id="bill-section-2" class="bill-section-heading">Section 2. Safety Standards</h4>
 
