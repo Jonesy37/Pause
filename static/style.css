@@ -669,6 +669,17 @@ html {
 .section-body strong { font-weight: 700; }
 .section-body em     { font-style: italic; }
 
+/* Featured names (the bill itself and the committee it establishes)
+   get the same red accent underline used elsewhere on the page so the
+   eye catches them on the first scan of the mission statement. */
+.section-body strong.bill-name {
+    color: #fff;
+    border-bottom: 2px solid var(--accent-red);
+    padding-bottom: 1px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
 .section-body a {
     color: #9cc4ff;
     text-decoration: underline;
@@ -690,7 +701,14 @@ html {
    .comment-panel on click, and a curved line connects the two. */
 .tip {
     position: relative;
-    border-bottom: 1px dotted rgba(230, 57, 70, 0.75);
+    /* Solid 2px underline (up from 1px dotted) reads clearly at body
+       font size on a pure-black background without being as noisy as a
+       full highlight. A faint red wash behind the phrase reinforces it
+       further — hover just deepens that same wash. */
+    border-bottom: 2px solid var(--accent-red);
+    background: rgba(230, 57, 70, 0.08);
+    padding: 0 2px;
+    border-radius: 2px;
     cursor: pointer;
     transition:
         background 0.18s ease,
@@ -698,7 +716,20 @@ html {
 }
 .tip:hover {
     border-bottom-color: var(--accent-red);
-    background: rgba(230, 57, 70, 0.08);
+    background: rgba(230, 57, 70, 0.18);
+}
+
+/* Inside the bill we want the tipped phrases to pop even more — the
+   dense legal-numbered paragraphs make a subtle underline easy to
+   miss. Slightly brighter wash + a soft outer glow does it. */
+.bill .tip {
+    background: rgba(230, 57, 70, 0.15);
+    border-bottom-color: #ff4d5e;
+    box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.25);
+}
+.bill .tip:hover {
+    background: rgba(230, 57, 70, 0.28);
+    box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.45);
 }
 /* Stronger highlight on whichever tip is currently open in the side
    panel, so readers always know which sentence the panel belongs to. */
@@ -815,6 +846,18 @@ html {
 }
 .comment-panel__body p { margin-bottom: 0.85rem; }
 .comment-panel__body p:last-child { margin-bottom: 0; }
+/* Block-styled spans inside tip-body. Authoring markup uses <span
+   class="cp"> rather than <p> because the tip-body itself is nested
+   inside a <p class="lvl-N"> in the bill — and the browser would
+   auto-close the outer <p> around any literal nested <p>, detaching
+   the tip-body from its .tip wrapper and breaking the click handler.
+   Styling these spans as blocks gives us proper paragraph spacing
+   without breaking the flow HTML. */
+.comment-panel__body .cp {
+    display: block;
+    margin-bottom: 0.85rem;
+}
+.comment-panel__body .cp:last-child { margin-bottom: 0; }
 .comment-panel__body a {
     color: #a8c8ff;
     text-decoration: underline;

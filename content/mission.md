@@ -13,8 +13,8 @@ You don't need to touch any code. Save the file and refresh the page.
 ========================================================================
 -->
 
-We believe that the safe and sustainable training, development and application of artificial intelligence systems, along with the infrastructure required to support them, is not merely important, it is non-negotiable. For these reasons, we propose the **Artificial Intelligence Safety Oversight Act**, which establishes the implementation of a temporary "pause on all current development of artificial intelligence systems and infrastructure projects until sufficient safety standards laid out in this bill have been met.
+We believe that the safe and sustainable training, development and application of artificial intelligence systems, along with the infrastructure required to support them, is not merely important, it is non-negotiable. For these reasons, we propose the <strong class="bill-name">Artificial Intelligence Safety Oversight Act</strong>, which establishes the implementation of a temporary "pause on all current development of artificial intelligence systems and infrastructure projects until sufficient safety standards laid out in this bill have been met.
 
-In addition, this bill creates the **Utah Committee for Artificial Intelligence Safety Oversight**, which, through their expertise, will conduct intensive audits on all artificial intelligence systems to ensure the required threshold of safety and ethical practices are being met.
+In addition, this bill creates the <strong class="bill-name">Utah Committee for Artificial Intelligence Safety Oversight</strong>, which, through their expertise, will conduct intensive audits on all artificial intelligence systems to ensure the required threshold of safety and ethical practices are being met.
 
 We believe that these measures, while ambitious, will protect Utah's citizens and its environment from unsafe or misaligned AI system behavior and associated harms, while maintaining human autonomy and control over such systems.

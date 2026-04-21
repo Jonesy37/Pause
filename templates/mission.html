@@ -213,7 +213,16 @@
             { el: document.querySelector('.stars-large'),  rate: 0.45 },
         ].filter(l => l.el);
 
-        if (!layers.length) return;
+        // The satellite layer is a sibling fixed element rather than a
+        // background-image. Parallax is applied via CSS transform so its
+        // children (individually animated .satellite dots) still run
+        // their own keyframes — the layer shifts underneath them.
+        // Rate sits between the medium and large star layers so the
+        // satellites read as "near Earth orbit" depth.
+        const satLayer = document.querySelector('.satellite-layer');
+        const SAT_RATE = 0.38;
+
+        if (!layers.length && !satLayer) return;
 
         let ticking = false;
         function update() {
@@ -221,6 +230,9 @@
             layers.forEach(({ el, rate }) => {
                 el.style.backgroundPositionY = `${-y * rate}px`;
             });
+            if (satLayer) {
+                satLayer.style.transform = `translate3d(0, ${-y * SAT_RATE}px, 0)`;
+            }
             ticking = false;
         }
         window.addEventListener('scroll', () => {
@@ -377,10 +389,14 @@
         earth.rotation.z = 0.41;
         scene.add(earth);
 
-        const sun = new THREE.DirectionalLight(0xffffff, 1.25);
+        // Brighter lighting to match the punched-up splash globe.
+        // Same triad (directional sun + warm ambient + cool hemisphere
+        // fill) so the two globes feel like the same Earth, just smaller.
+        const sun = new THREE.DirectionalLight(0xffffff, 1.9);
         sun.position.set(-4, 2, 3);
         scene.add(sun);
-        scene.add(new THREE.AmbientLight(0x222233, 1));
+        scene.add(new THREE.AmbientLight(0x3a3a55, 1.35));
+        scene.add(new THREE.HemisphereLight(0x8fb7ff, 0x0a0a1a, 0.35));
 
         // Pause the render loop when the globe is off-screen so it
         // doesn't chew battery while the reader is up in the bill.

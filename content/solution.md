@@ -44,13 +44,13 @@ page. No code changes needed.
 
 <p class="lvl-0">(1) As used in this chapter:</p>
 
-<p class="lvl-1">(a) <span class="tip">"Artificial intelligence system" means a machine-based system that makes predictions, recommendations, or decisions influencing real or virtual environments.<span class="tip-body"><a href="https://www.ncsl.org/technology-and-communication/state-artificial-intelligence-ai-and-related-terms-definition-examples" target="_blank" rel="noopener">Where many standard definitions originate from.</a></span></span></p>
+<p class="lvl-1">(a) <span class="tip">"Artificial intelligence system" means a machine-based system that makes predictions, recommendations, or decisions influencing real or virtual environments.<span class="tip-body"><span class="cp">This is where many standard AI-relevant definitions originate from.</span><span class="cp"><a href="https://www.ncsl.org/technology-and-communication/state-artificial-intelligence-ai-and-related-terms-definition-examples" target="_blank" rel="noopener">NCSL — State Artificial Intelligence (AI) and Related Terms: Definitions and Examples</a></span></span></span></p>
 
 <p class="lvl-1">(b) "Large Artificial Intelligence System" means an artificial intelligence system</p>
 
 <p class="lvl-2">(i) whose total development cost exceeds $10,000,000;</p>
 
-<p class="lvl-2">(ii) which utilizes over 10,000,000,000 parameters;</p>
+<p class="lvl-2">(ii) <span class="tip">which utilizes over 10,000,000,000 parameters<span class="tip-body"><span class="cp">Many of the most critical capabilities emerge close to these thresholds, such as self-replication.</span><span class="cp"><a href="https://arxiv.org/abs/2412.12140" target="_blank" rel="noopener">arXiv 2412.12140 — Frontier AI systems have surpassed the self-replicating red line</a></span><span class="cp">Another example of dangerous capabilities with even fewer parameters:</span><span class="cp"><a href="https://arxiv.org/abs/2303.11156" target="_blank" rel="noopener">arXiv 2303.11156 — Can AI-Generated Text be Reliably Detected?</a></span></span></span>;</p>
 
 <p class="lvl-2">(iii) <span class="tip">which was trained using a quantity of computing power greater than 10^24 integer or floating-point operations<span class="tip-body"><a href="https://legiscan.com/CA/text/SB1047/id/2919384" target="_blank" rel="noopener">A standard definition from California's SB-1047 AI bill.</a></span></span>; or</p>
 
@@ -72,7 +72,7 @@ page. No code changes needed.
 
 <p class="lvl-1">(e) "Committee" refers to the Utah Committee for Artificial Intelligence Safety Oversight created in this section</p>
 
-<p class="lvl-1">(f) <span class="tip">"Air-gapped" means physically isolated from the public internet and from any external network such that no data can be transmitted to or from the system except through controlled, logged, and authenticated transfer procedures<span class="tip-body"><a href="https://www.ibm.com/think/topics/air-gap" target="_blank" rel="noopener">IBM's article on air-gapping.</a></span></span></p>
+<p class="lvl-1">(f) <span class="tip">"Air-gapped" means physically isolated from the public internet and from any external network such that no data can be transmitted to or from the system except through controlled, logged, and authenticated transfer procedures<span class="tip-body"><span class="cp">For more information on the relevance of this definition, see IBM's article on air-gapping.</span><span class="cp"><a href="https://www.ibm.com/think/topics/air-gap" target="_blank" rel="noopener">IBM — What is an air gap?</a></span></span></span></p>
 
 <p class="lvl-1">(g) Data Center: A facility used primarily to house computer systems and associated components, including servers, storage systems, and networking equipment, that is used in part or in whole for the training, deployment, or operation of an artificial intelligence system.</p>
 
@@ -90,13 +90,13 @@ page. No code changes needed.
 
 <p class="lvl-0">(3) These standards are that the developers of artificial intelligence systems must ensure:</p>
 
-<p class="lvl-1">(a) <span class="tip">the ability to interpret the drives and choices of a given artificial intelligence system<span class="tip-body"><a href="https://arxiv.org/abs/2501.16496" target="_blank" rel="noopener">Discusses open problems in the field of mechanistic interpretability.</a></span></span>, so as to ensure the compliance with the other safety standards, including the ability to</p>
+<p class="lvl-1">(a) <span class="tip">the ability to interpret the drives and choices of a given artificial intelligence system<span class="tip-body"><span class="cp">The capability to effectively interpret the drives and choices of AI systems is extremely important, as it ensures our actual ability to verify that any alignment standard is being met. It also lets researchers and developers understand when a system is being deceptive.</span><span class="cp"><a href="https://arxiv.org/abs/2501.16496" target="_blank" rel="noopener">arXiv 2501.16496 — Open Problems in Mechanistic Interpretability</a></span></span></span>, so as to ensure the compliance with the other safety standards, including the ability to</p>
 
 <p class="lvl-2">(i) understand the steps an artificial intelligence system took to arrive at a given output; and</p>
 
 <p class="lvl-2">(ii) describe the functional role of said steps</p>
 
-<p class="lvl-1">(b) <span class="tip">the complete prevention of any system to self-replicate<span class="tip-body"><a href="https://www.eecs.ucf.edu/~czou/research/P2PBotnets-bookChapter.pdf" target="_blank" rel="noopener">How an AI might replicate itself.</a><br><br><a href="https://arxiv.org/abs/2412.12140" target="_blank" rel="noopener">AI systems already have this capability.</a></span></span>, meaning a complete prohibition on the ability to</p>
+<p class="lvl-1">(b) <span class="tip">the complete prevention of any system to self-replicate<span class="tip-body"><span class="cp">Any system with the ability to self-replicate could effectively function as an advanced computer virus that evades capture and containment, allowing it to accomplish adverse goals. An autonomous, self-replicating system may even be capable of rewriting its own programming to suit harmful purposes.</span><span class="cp"><a href="https://arxiv.org/abs/2412.12140" target="_blank" rel="noopener">arXiv 2412.12140 — assesses the ability of current models to self-replicate</a></span><span class="cp">The following articles provide a framework for how a system might accomplish self-replication:</span><span class="cp"><a href="https://www.eecs.ucf.edu/~czou/research/P2PBotnets-bookChapter.pdf" target="_blank" rel="noopener">UCF EECS — Peer-to-Peer Botnets (book chapter, PDF)</a></span></span></span>, meaning a complete prohibition on the ability to</p>
 
 <p class="lvl-2">(i) create copies of itself that are capable of performing tasks at the same or similar levels as the original;</p>
 
@@ -104,21 +104,21 @@ page. No code changes needed.
 
 <p class="lvl-2">(iii) distribute said copies to computer systems other than the one the original system exists on</p>
 
-<p class="lvl-1">(c) <span class="tip">strict model alignment with lawful purposes within any use case, meaning models must<span class="tip-body"><a href="https://arxiv.org/abs/2310.19852" target="_blank" rel="noopener">A comprehensive survey of the problems within the field of AI alignment.</a></span></span>:</p>
+<p class="lvl-1">(c) <span class="tip">strict model alignment with lawful purposes within any use case, meaning models must<span class="tip-body"><span class="cp">A critical danger of AI systems comes both from autonomous action-taking and from illicit human use. We have already seen the increased enabling of cyber-attacks with varying degrees of human involvement. Models must consistently refuse to comply with, or commit, prohibited actions.</span><span class="cp"><a href="https://arxiv.org/abs/2310.19852" target="_blank" rel="noopener">arXiv 2310.19852 — a comprehensive survey of the open problems in the field of AI alignment</a></span></span></span>:</p>
 
 <p class="lvl-2">(i) be flexible enough to adapt to different legal thresholds, or else function at the minimum level of alignment;</p>
 
-<p class="lvl-2">(ii) <span class="tip">ensure the models are not deceptive when determining alignment<span class="tip-body"><a href="https://www.anthropic.com/research/alignment-faking" target="_blank" rel="noopener">How a model's deception results in alignment faking.</a></span></span>; and</p>
+<p class="lvl-2">(ii) <span class="tip">ensure the models are not deceptive when determining alignment<span class="tip-body"><span class="cp">Anthropic's research into how a model's deception results in alignment faking.</span><span class="cp"><a href="https://www.anthropic.com/research/alignment-faking" target="_blank" rel="noopener">Anthropic — Alignment Faking in Large Language Models</a></span></span></span>; and</p>
 
-<p class="lvl-2">(iii) <span class="tip">ensure the models cannot be exploited by users to accomplish illicit purposes<span class="tip-body"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10803091/" target="_blank" rel="noopener">An example of how this might occur via cyberterrorism.</a></span></span></p>
+<p class="lvl-2">(iii) <span class="tip">ensure the models cannot be exploited by users to accomplish illicit purposes<span class="tip-body"><span class="cp">An example of how exploitation might occur to enable cyber-terrorism.</span><span class="cp"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10803091/" target="_blank" rel="noopener">PMC — on AI-enabled cyber-terrorism</a></span></span></span></p>
 
-<p class="lvl-1">(d) <span class="tip">the capability for reliable identification of any generated visual content<span class="tip-body"><a href="https://deepmind.google/models/synthid/" target="_blank" rel="noopener">Real-life example of Google's SynthID.</a><br><br><a href="https://arxiv.org/abs/2510.02384" target="_blank" rel="noopener">A comprehensive review of the problems surrounding AI image watermarking.</a></span></span> that:</p>
+<p class="lvl-1">(d) <span class="tip">the capability for reliable identification of any generated visual content<span class="tip-body"><span class="cp">A present danger and harm comes in the form of easily accessible deceptive content that plagiarizes, defames, and otherwise misleads individuals and groups to harmful consequences. Hence, we need a consistent method by which to identify generated content.</span><span class="cp"><a href="https://deepmind.google/models/synthid/" target="_blank" rel="noopener">Google DeepMind — SynthID, a real-world example of reliable identification</a></span><span class="cp"><a href="https://arxiv.org/abs/2510.02384" target="_blank" rel="noopener">arXiv 2510.02384 — a comprehensive review of the problems surrounding AI image watermarking</a></span></span></span> that:</p>
 
 <p class="lvl-2">(i) persists over light alterations to generated content</p>
 
 <p class="lvl-2">(ii) can be accessed by the general public</p>
 
-<p class="lvl-1">(e) the ability to completely deactivate any system within 12 hours, including</p>
+<p class="lvl-1">(e) <span class="tip">the ability to completely deactivate any system within 12 hours<span class="tip-body"><span class="cp">This is effectively a "kill switch": in the event of an anticipated or realized major threat presented by an AI system, a developer or third party can shut off all of the model's capabilities.</span></span></span>, including</p>
 
 <p class="lvl-2">(i) any data center or computer system the original model runs on</p>
 
@@ -158,7 +158,7 @@ page. No code changes needed.
 
 <p class="lvl-1">(b) The terms of the member shall be staggered so that 3 board members are appointed every year</p>
 
-<p class="lvl-0">(7) <span class="tip">The committee conducts annual audits of all approved artificial intelligence systems, which will include full access to<span class="tip-body"><a href="https://hai.stanford.edu/news/strengthening-ai-accountability-through-better-third-party-evaluations" target="_blank" rel="noopener">Discourse from MIT, Stanford, Princeton, and others on the need for third-party AI evaluations.</a></span></span>:</p>
+<p class="lvl-0">(7) <span class="tip">The committee conducts annual audits of all approved artificial intelligence systems, which will include full access to<span class="tip-body"><span class="cp">A joint effort from MIT, Stanford, Princeton, and other prominent institutions on the need for third-party AI evaluations.</span><span class="cp"><a href="https://hai.stanford.edu/news/strengthening-ai-accountability-through-better-third-party-evaluations" target="_blank" rel="noopener">Stanford HAI — Strengthening AI Accountability Through Better Third-Party Evaluations</a></span></span></span>:</p>
 
 <p class="lvl-1">(a) the entire codebase of the artificial intelligence system;</p>
 
@@ -166,13 +166,13 @@ page. No code changes needed.
 
 <p class="lvl-1">(c) the model weights.</p>
 
-<p class="lvl-0">(8) <span class="tip">To maintain the privacy of corporate trade secrets the committee shall<span class="tip-body"><a href="https://leg.colorado.gov/initiative_files/3308/download" target="_blank" rel="noopener">An example of similar systems in practice in Colorado.</a></span></span>:</p>
+<p class="lvl-0">(8) <span class="tip">To maintain the privacy of corporate trade secrets the committee shall<span class="tip-body"><span class="cp">An example of similar security protections already in practice in Colorado.</span><span class="cp"><a href="https://leg.colorado.gov/initiative_files/3308/download" target="_blank" rel="noopener">Colorado Legislature — initiative text (PDF)</a></span></span></span>:</p>
 
 <p class="lvl-1">(a) conduct all audits within an air-gapped, decentralized storage and audit environment;</p>
 
 <p class="lvl-1">(b) support receipt and verification of zero-knowledge audit proofs for contraband-data compliance without requiring public disclosure of proprietary source code, model weights, or trade secrets;</p>
 
-<p class="lvl-1">(c) <span class="tip">classify all information obtained under Subsection 7 as protected records under Title 63G, Chapter 2, Government Records Access and Management Act<span class="tip-body"><a href="https://le.utah.gov/xcode/Title63G/Chapter2/C63G-2_1800010118000101.pdf" target="_blank" rel="noopener">The GRAMA Act reference.</a></span></span>; and</p>
+<p class="lvl-1">(c) <span class="tip">classify all information obtained under Subsection 7 as protected records under Title 63G, Chapter 2, Government Records Access and Management Act<span class="tip-body"><span class="cp">The GRAMA Act — Utah's statute governing the classification of protected state records.</span><span class="cp"><a href="https://le.utah.gov/xcode/Title63G/Chapter2/C63G-2_1800010118000101.pdf" target="_blank" rel="noopener">Utah Code Title 63G, Chapter 2 — GRAMA (PDF)</a></span></span></span>; and</p>
 
 <p class="lvl-1">(d) ensure that all third-party contracted engineers hired to assist the committee maintain an active SOC 2 Type II compliance certification.</p>
 
