@@ -20,7 +20,9 @@ import os
 from pathlib import Path
 
 import markdown
-from flask import Flask, render_template
+from flask import Flask, render_template, Response
+
+from bill_pdf import render_bill_pdf
 
 HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 
@@ -80,6 +82,26 @@ def mission():
         mission_html=load_section("mission"),
         solution_html=load_section("solution"),
         authors_html=load_section("authors"),
+    )
+
+
+@app.route("/bill.pdf")
+def bill_pdf():
+    """
+    Serve The Bill as a downloadable PDF, regenerated on every request
+    so it's always in sync with content/solution.md.
+    """
+    pdf_bytes = render_bill_pdf(CONTENT_DIR / "solution.md")
+    return Response(
+        pdf_bytes,
+        mimetype="application/pdf",
+        headers={
+            # "attachment" = trigger a download dialog rather than open
+            # inline. Filename is what the browser suggests.
+            "Content-Disposition": 'attachment; filename="ai-safety-oversight-act.pdf"',
+            # Don't cache — the content file can change between deploys.
+            "Cache-Control": "no-cache, max-age=0",
+        },
     )
 
 

@@ -2,6 +2,15 @@
    Press Pause — global styles
    ============================================================ */
 
+:root {
+    /* Single accent red used across the mission page — thin rules
+       under section titles, the sidebar active indicator, tooltip
+       dotted underlines, and the small pause-mark next to the title.
+       Tuned to harmonize with the splash page's #c71414 pause button
+       while staying legible on the pure-black background. */
+    --accent-red: #e63946;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -323,9 +332,64 @@ html {
 
 .side-nav a.nav-link.active {
     color: #fff;
-    border-left-color: #fff;
+    /* Bundle B: red active indicator on the left rail. */
+    border-left-color: var(--accent-red);
+    border-left-width: 3px;
     padding-left: 1.1rem;
     font-weight: 700;
+}
+
+/* --- Sub-nav under "The Bill" (one link per bill section) --------
+   Thin, smaller, slightly dimmer than the main two anchors. Keeps
+   the sidebar still scannable at a glance. Collapsed by default
+   when the solution section isn't in view; expanded once the reader
+   is inside the bill so the five sub-anchors don't add visual noise
+   when they're not useful. */
+.side-subnav {
+    list-style: none;
+    margin: 0.7rem 0 0 0.35rem;
+    padding-left: 0.9rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+        max-height 0.35s ease,
+        opacity 0.25s ease,
+        margin-top 0.25s ease;
+}
+.side-subnav.expanded {
+    max-height: 18rem;   /* enough for 5 items; exact value isn't critical */
+    opacity: 1;
+}
+.side-subnav a.sub-link {
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 400;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.45);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    padding-left: 0.6rem;
+    border-left: 2px solid transparent;
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        padding-left 0.2s ease;
+    display: inline-block;
+    line-height: 1.35;
+}
+.side-subnav a.sub-link:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+.side-subnav a.sub-link.active {
+    color: #fff;
+    border-left-color: var(--accent-red);
+    padding-left: 0.75rem;
+    font-weight: 600;
 }
 
 /* --- Main content column --------------------------------------- */
@@ -366,6 +430,55 @@ html {
     margin: 0 auto;
 }
 
+/* Bundle F: small pause-symbol mark (‖) tucked beside the page title.
+   Echoes the splash-page pause button in miniature — red, roughly
+   half the cap-height of the title, baseline-aligned. */
+.title-mark {
+    color: var(--accent-red);
+    font-weight: 500;
+    font-size: 0.55em;           /* relative to .page-title */
+    letter-spacing: -0.05em;
+    margin-left: 0.55rem;
+    vertical-align: 0.35em;      /* nudge up toward cap-line */
+    display: inline-block;
+    opacity: 0.9;
+}
+
+/* Utah State Capitol photo under the page header.
+   Constrained max-width, grayscale filter (so the source file can
+   stay color for future remixes), subtle border + shadow. Caption
+   below carries photographer credit + license per CC-BY-SA terms. */
+.capitol-photo {
+    margin: 2.5rem auto 0;
+    max-width: 640px;
+    text-align: center;
+}
+.capitol-photo img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(1) contrast(1.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+.capitol-photo figcaption {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 0.7rem;
+    line-height: 1.4;
+}
+.capitol-photo figcaption a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.capitol-photo figcaption a:hover {
+    color: #fff;
+}
+
 .page-section {
     padding: 4rem 0;
     scroll-margin-top: 3rem;   /* offset for smooth-scroll anchors */
@@ -382,6 +495,20 @@ html {
     color: #fff;
     margin-bottom: 2rem;
     letter-spacing: -0.01em;
+    /* Bundle A: thin red accent rule beneath each section title.
+       Uses ::after so the rule sits exactly under the text (not the
+       full column width) and can be tuned independently. */
+    position: relative;
+    padding-bottom: 0.55rem;
+}
+.section-title::after {
+    content: "";
+    display: block;
+    width: 3.2rem;
+    height: 3px;
+    background: var(--accent-red);
+    margin-top: 0.75rem;
+    border-radius: 2px;
 }
 
 /* --- Footer with author credits -------------------------------- */
@@ -417,13 +544,18 @@ html {
 .page-footer em { font-style: italic; }
 .page-footer strong { font-weight: 700; color: #fff; }
 
-/* --- Section body (rendered from markdown) --------------------- */
+/* --- Section body (rendered from markdown) ---------------------
+   Body copy is rendered in a soft light-grey rather than pure white.
+   Pure #fff on pure #000 is very high-contrast and fatigues the eye
+   over long-form reading; ~82% white stays accessible (>7:1 contrast
+   on black) while feeling noticeably calmer. Headings below stay at
+   #fff so the hierarchy between body and structure still reads. */
 .section-body {
     font-family: 'Spectral', Georgia, serif;
     font-weight: 400;
     font-size: 1.2rem;
     line-height: 1.75;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.82);
 }
 
 .section-body p {
@@ -483,32 +615,34 @@ html {
    or tap on mobile. */
 .tip {
     position: relative;
-    border-bottom: 1px dotted rgba(255, 255, 255, 0.55);
+    /* Bundle C: red dotted underline signals a citation is available. */
+    border-bottom: 1px dotted rgba(230, 57, 70, 0.75);
     cursor: help;
 }
 
-/* Invisible hover bridge — fills the gap between the underlined
-   text and the pop-up above it so the mouse can traverse into the
-   pop-up (e.g. to click a link) without hover lapsing. Covers the
-   full 12px gap plus a 4px overlap into the pop-up edge. */
+/* Invisible hover bridge — fills the 12px gap between the underlined
+   text and the pop-up to its right, so the mouse can cross into the
+   pop-up (and click a link inside) without hover lapsing. */
 .tip::before {
     content: "";
     position: absolute;
-    bottom: 100%;
-    left: -10px;
-    right: -10px;
-    height: 18px;
+    left: 100%;
+    top: -4px;
+    bottom: -4px;
+    width: 18px;
     /* No background — just a hoverable hit area. */
 }
 
 .tip-body {
-    /* Hidden by default */
+    /* Hidden by default. Anchored to the right of the underlined
+       word, vertically centered on the text, so it doesn't cover
+       the surrounding line like the old "float above" layout did. */
     position: absolute;
-    bottom: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%) translateY(6px);
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%) translateX(6px);
     width: max-content;
-    max-width: min(360px, 90vw);
+    max-width: min(340px, calc(100vw - 3rem));
 
     background: #0a0a0a;
     color: #fff;
@@ -542,26 +676,27 @@ html {
     z-index: 50;
 }
 
-/* Little arrow pointing down at the underlined word.
-   Two triangles stacked: the outer one matches the border,
-   the inner one matches the body — gives a clean bordered arrow. */
+/* Little arrow pointing left at the underlined word (since the pop-up
+   now lives to the right of the word). Two triangles stacked — outer
+   matches the border, inner matches the body — for a clean bordered
+   arrow. */
 .tip-body::before,
 .tip-body::after {
     content: "";
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    transform: translateY(-50%);
     border: 7px solid transparent;
 }
 .tip-body::before {
-    top: 100%;
-    border-top-color: rgba(255, 255, 255, 0.22);
+    right: 100%;
+    border-right-color: rgba(255, 255, 255, 0.22);
 }
 .tip-body::after {
-    top: 100%;
-    margin-top: -1px;
+    right: 100%;
+    margin-right: -1px;
     border-width: 6px;
-    border-top-color: #0a0a0a;
+    border-right-color: #0a0a0a;
 }
 
 /* Reveal on hover (desktop), keyboard focus, or .open (tapped on mobile).
@@ -572,9 +707,42 @@ html {
 .tip.open .tip-body {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(-50%) translateX(0);
     pointer-events: auto;
     transition-delay: 0s;
+}
+
+/* Opt-in: .tip.tip-left places the pop-up to the LEFT of the word
+   instead of the right. Use on tooltips that sit near the right edge
+   of a line where a right-side pop-up would spill off the column. */
+.tip.tip-left::before {
+    left: auto;
+    right: 100%;
+}
+.tip.tip-left .tip-body {
+    left: auto;
+    right: calc(100% + 12px);
+    transform: translateY(-50%) translateX(-6px);
+}
+.tip.tip-left .tip-body::before,
+.tip.tip-left .tip-body::after {
+    right: auto;
+    left: 100%;
+}
+.tip.tip-left .tip-body::before {
+    border-right-color: transparent;
+    border-left-color: rgba(255, 255, 255, 0.22);
+}
+.tip.tip-left .tip-body::after {
+    border-right-color: transparent;
+    border-left-color: #0a0a0a;
+    margin-right: 0;
+    margin-left: -1px;
+}
+.tip.tip-left:hover .tip-body,
+.tip.tip-left:focus-within .tip-body,
+.tip.tip-left.open .tip-body {
+    transform: translateY(-50%) translateX(0);
 }
 
 /* Links inside pop-ups — readable on the black background, and
@@ -587,6 +755,54 @@ html {
 }
 .tip-body a:hover {
     color: #fff;
+}
+
+/* --- PDF download button (sits at the top of the bill) ---------
+   Dark ghost-button to match the site's black/white/red palette —
+   transparent interior with a thin white border, red shifts in on
+   hover. The icon is inline SVG so it inherits currentColor cleanly. */
+.bill-download {
+    margin: -0.5rem 0 2rem;
+}
+a.download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.6rem 1.15rem;
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 999px;   /* pill shape */
+    text-decoration: none;
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+a.download-btn:hover,
+a.download-btn:focus-visible {
+    color: #fff;
+    background: rgba(230, 57, 70, 0.12);
+    border-color: var(--accent-red);
+    box-shadow: 0 4px 18px rgba(230, 57, 70, 0.22);
+    outline: none;
+    transform: translateY(-1px);
+}
+a.download-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(230, 57, 70, 0.25);
+}
+.download-btn-icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: 0 0 auto;
+    display: block;
 }
 
 /* --- "The Bill" legal-document formatting ---------------------
@@ -651,7 +867,13 @@ html {
     }
     .side-nav a.nav-link.active {
         padding-left: 0;
-        border-bottom-color: #fff;
+        border-bottom-color: var(--accent-red);
+    }
+    /* Hide the bill sub-anchors in the horizontal mobile nav — five
+       extra links would overwhelm the top strip. Users can still jump
+       via the main "The Bill" link and scroll. */
+    .side-subnav {
+        display: none;
     }
     .mission {
         padding-top: 2.5rem;
