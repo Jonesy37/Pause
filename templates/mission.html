@@ -435,6 +435,21 @@
 
         function rand(min, max) { return min + Math.random() * (max - min); }
 
+        // The parallax script translates the whole .satellite-layer
+        // upward as the reader scrolls down. Satellites are positioned
+        // in the layer's local coordinate space, so if we spawn at a
+        // raw "40vh" it lands 40% down the *original* viewport — which,
+        // once the reader has scrolled a few screens, is way above the
+        // current window. Read back the layer's current translate here
+        // and add it to the spawn Y so the satellite always appears in
+        // the viewport the reader is actually looking at.
+        function currentLayerYOffset() {
+            const m = /translate3d\([^,]+,\s*(-?[\d.]+)px/.exec(
+                layer.style.transform || ''
+            );
+            return m ? parseFloat(m[1]) : 0;   // px; 0 or negative
+        }
+
         function spawn() {
             if (layer.childElementCount >= MAX_LIVE) {
                 scheduleNext();
@@ -445,16 +460,23 @@
             const dir  = Math.random() < 0.5 ? 1 : -1;
             const startX = dir === 1 ? -5 : 105;           // % of viewport width
             const endX   = dir === 1 ? 105 : -5;
-            const startY = rand(8, 88);                    // % of viewport height
-            const endY   = startY + rand(-18, 18);
-            const duration = rand(14000, 22000);
+
+            // Put the satellite somewhere in the currently visible
+            // viewport, then compensate for the layer's parallax
+            // translate so it actually shows up there.
+            const vhPx          = window.innerHeight / 100;
+            const layerOffsetPx = currentLayerYOffset();   // <= 0
+            const startYvhPct   = rand(8, 88);
+            const startYpx      = startYvhPct * vhPx - layerOffsetPx;
+            const endYpx        = startYpx + rand(-18, 18) * vhPx;
+            const duration      = rand(14000, 22000);
 
             const sat = document.createElement('div');
             sat.className = 'satellite';
             sat.style.setProperty('--sat-start-x', startX + 'vw');
             sat.style.setProperty('--sat-end-x',   endX + 'vw');
-            sat.style.setProperty('--sat-start-y', startY + 'vh');
-            sat.style.setProperty('--sat-end-y',   endY + 'vh');
+            sat.style.setProperty('--sat-start-y', startYpx + 'px');
+            sat.style.setProperty('--sat-end-y',   endYpx + 'px');
             sat.style.animationDuration = duration + 'ms';
             // Flip horizontally so the "antenna" trails behind.
             sat.style.setProperty('--sat-flip', dir === -1 ? '-1' : '1');
