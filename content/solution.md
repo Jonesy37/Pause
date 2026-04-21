@@ -44,7 +44,7 @@ page. No code changes needed.
 
 <p class="lvl-0">(1) As used in this chapter:</p>
 
-<p class="lvl-1">(a) "Artificial intelligence system" means a machine-based system that makes predictions, recommendations, or decisions influencing real or virtual environments.</p>
+<p class="lvl-1">(a) <span class="tip">"Artificial intelligence system" means a machine-based system that makes predictions, recommendations, or decisions influencing real or virtual environments.<span class="tip-body"><a href="https://www.ncsl.org/technology-and-communication/state-artificial-intelligence-ai-and-related-terms-definition-examples" target="_blank" rel="noopener">Where many standard definitions originate from.</a></span></span></p>
 
 <p class="lvl-1">(b) "Large Artificial Intelligence System" means an artificial intelligence system</p>
 
@@ -52,7 +52,7 @@ page. No code changes needed.
 
 <p class="lvl-2">(ii) which utilizes over 10,000,000,000 parameters;</p>
 
-<p class="lvl-2">(iii) which was trained using a quantity of computing power greater than 10^24 integer or floating-point operations; or</p>
+<p class="lvl-2">(iii) <span class="tip">which was trained using a quantity of computing power greater than 10^24 integer or floating-point operations<span class="tip-body"><a href="https://legiscan.com/CA/text/SB1047/id/2919384" target="_blank" rel="noopener">A standard definition from California's SB-1047 AI bill.</a></span></span>; or</p>
 
 <p class="lvl-2">(iv) which could reasonably be expected to have similar performance on benchmarks commonly used to quantify the performance of state-of-the-art foundation models</p>
 
@@ -72,7 +72,7 @@ page. No code changes needed.
 
 <p class="lvl-1">(e) "Committee" refers to the Utah Committee for Artificial Intelligence Safety Oversight created in this section</p>
 
-<p class="lvl-1">(f) "Air-gapped" means physically isolated from the public internet and from any external network such that no data can be transmitted to or from the system expect through controlled, logged, and authenticated transfer procedures</p>
+<p class="lvl-1">(f) <span class="tip">"Air-gapped" means physically isolated from the public internet and from any external network such that no data can be transmitted to or from the system expect through controlled, logged, and authenticated transfer procedures<span class="tip-body"><a href="https://www.ibm.com/think/topics/air-gap" target="_blank" rel="noopener">IBM's article on air-gapping.</a></span></span></p>
 
 <p class="lvl-1">(g) Data Center: A facility used primarily to house computer systems and associated components, including servers, storage systems, and networking equipment, that is used in part or in whole for the training, deployment, or operation of an artificial intelligence system.</p>
 
