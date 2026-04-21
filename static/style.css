@@ -499,16 +499,18 @@ html {
 
 /* --- Earth horizon at page bottom -------------------------------
    A large NASA photograph (Apollo 17 Blue Marble) anchored at the
-   bottom of the main-page so only the top half of the disc reads as
+   bottom of the main page so only the top half of the disc reads as
    an Earth-from-orbit horizon. The photo is already on pure black
    with a natural atmospheric rim, so it meshes with the body #000
    background with no sharp cutoff; a gentle radial mask hides any
-   JPEG corner artifacts. The Authors credits overlay the image with
-   a dark lens + text-shadow so they stay readable over the brighter
-   ocean / cloud areas of the disc. */
+   JPEG corner artifacts. Purely decorative — the Authors credits
+   sit in a separate footer above it on plain black, where they're
+   guaranteed high-contrast. */
 .earth-horizon {
     position: relative;
-    margin-top: 6rem;
+    /* Authors footer above already supplies its own top-margin and
+       border, so a small gap here is all the separation we need. */
+    margin-top: 2rem;
     /* Container height == the visible top half of the Earth disc.
        The <img> below is rendered at width ~= 2 * container height
        with its top edge pinned to top:0 of the container, so exactly
@@ -549,37 +551,9 @@ html {
    behind the text region only (not the whole disc) so the photo stays
    bright at the edges, and every text node gets a deep drop shadow so
    headings + body stay legible over the brightest ocean highlights. */
-/* Use a compound selector so these rules win against the generic
-   .page-footer block further down in this file (both selectors have
-   the same 0-0-1-0 specificity, but .page-footer appears later in the
-   cascade and would otherwise override the overlay positioning). */
-.earth-horizon .earth-horizon__credits {
-    position: absolute;
-    inset: 0;
-    /* Neutralize .page-footer's framing — those made sense over plain
-       black, not over a photograph. */
-    margin: 0;
-    padding: 1rem;
-    border: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background: radial-gradient(ellipse 60% 55% at 50% 50%,
-        rgba(0, 0, 0, 0.55) 0%,
-        rgba(0, 0, 0, 0.20) 60%,
-        transparent 100%);
-    /* Credits sit above the Earth photo. */
-    z-index: 1;
-}
-
-.earth-horizon .earth-horizon__credits,
-.earth-horizon .earth-horizon__credits * {
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9),
-                 0 2px 10px rgba(0, 0, 0, 0.75);
-}
+/* Authors now live above the Earth image, inside the main content
+   column, styled by the generic .page-footer rules. The Earth below
+   is purely decorative — no overlaid text, no vignette needed. */
 
 @media (max-width: 640px) {
     .earth-horizon {
