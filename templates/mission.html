@@ -103,18 +103,29 @@
             </div>
         </section>
 
-        <!-- Small rotating Earth — a quiet reprise of the splash globe,
-             tucked between the bill and the authors. Uses the same
-             Three.js textures. No atmosphere, no interaction. -->
-        <div id="mini-globe" class="mini-globe" aria-hidden="true"></div>
-
-        <footer class="page-footer">
-            {{ authors_html|safe }}
-        </footer>
+        <!-- Earth horizon: a large public-domain NASA photograph of
+             Earth from space (Apollo 17, "Blue Marble," 1972), anchored
+             at the bottom of the page so only the top half of the disc
+             is visible. Reads as if the reader is in orbit looking down
+             at Earth's curve. The photo's own atmospheric rim fades
+             into the page's pure-black background with no sharp edge;
+             a gentle radial mask hides any JPEG block artifacts at
+             the very corners. The Authors credits sit overlaid on top
+             with a soft dark lens + drop shadow for readability. -->
+        <section class="earth-horizon" aria-label="Authors">
+            <img class="earth-horizon__img"
+                 src="{{ url_for('static', filename='images/earth_photo.jpg') }}"
+                 alt=""
+                 aria-hidden="true">
+            <footer class="page-footer earth-horizon__credits">
+                {{ authors_html|safe }}
+            </footer>
+        </section>
     </main>
 
-    <!-- Three.js is only needed on the mission page for the mini globe. -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <!-- The mission page no longer needs Three.js — the old rotating
+         mini-globe was replaced by a static NASA photograph. Splash
+         page still loads Three directly. -->
     <script>
     // Scroll-spy for the sidebar. Highlights the main section (Our
     // Position / The Bill) currently in view, and — once inside The
@@ -349,75 +360,6 @@
         }
         window.addEventListener('scroll', onScrollOrResize, { passive: true });
         window.addEventListener('resize', onScrollOrResize);
-    })();
-
-    // Small rotating Earth between the bill and the footer. Reuses the
-    // same texture assets as the splash page but simpler: no atmosphere,
-    // no clouds, slower spin. Skipped if Three.js failed to load so the
-    // page still works offline.
-    (function () {
-        if (typeof THREE === 'undefined') return;
-        const container = document.getElementById('mini-globe');
-        if (!container) return;
-
-        const size = Math.min(window.innerWidth * 0.55, 260);
-        container.style.width = size + 'px';
-        container.style.height = size + 'px';
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-        camera.position.z = 3.1;
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setClearColor(0x000000, 0);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(size, size);
-        container.appendChild(renderer.domElement);
-
-        const loader = new THREE.TextureLoader();
-        const earthTex  = loader.load("{{ url_for('static', filename='images/earth_color.jpg') }}");
-        const normalTex = loader.load("{{ url_for('static', filename='images/earth_normal.jpg') }}");
-        const specTex   = loader.load("{{ url_for('static', filename='images/earth_specular.jpg') }}");
-
-        const earth = new THREE.Mesh(
-            new THREE.SphereGeometry(1, 72, 72),
-            new THREE.MeshPhongMaterial({
-                map: earthTex, normalMap: normalTex, specularMap: specTex,
-                specular: new THREE.Color(0x222222), shininess: 14,
-            })
-        );
-        earth.rotation.z = 0.41;
-        scene.add(earth);
-
-        // Brighter lighting to match the punched-up splash globe.
-        // Same triad (directional sun + warm ambient + cool hemisphere
-        // fill) so the two globes feel like the same Earth, just smaller.
-        const sun = new THREE.DirectionalLight(0xffffff, 1.9);
-        sun.position.set(-4, 2, 3);
-        scene.add(sun);
-        scene.add(new THREE.AmbientLight(0x3a3a55, 1.35));
-        scene.add(new THREE.HemisphereLight(0x8fb7ff, 0x0a0a1a, 0.35));
-
-        // Pause the render loop when the globe is off-screen so it
-        // doesn't chew battery while the reader is up in the bill.
-        let visible = false;
-        const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; });
-        io.observe(container);
-
-        function animate() {
-            requestAnimationFrame(animate);
-            if (!visible) return;
-            earth.rotation.y += 0.0011;
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        window.addEventListener('resize', () => {
-            const s = Math.min(window.innerWidth * 0.55, 260);
-            container.style.width = s + 'px';
-            container.style.height = s + 'px';
-            renderer.setSize(s, s);
-        });
     })();
 
     // Background satellites. Every few seconds we spawn a small
