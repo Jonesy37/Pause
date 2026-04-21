@@ -72,7 +72,7 @@ page. No code changes needed.
 
 <p class="lvl-1">(e) "Committee" refers to the Utah Committee for Artificial Intelligence Safety Oversight created in this section</p>
 
-<p class="lvl-1">(f) <span class="tip">"Air-gapped" means physically isolated from the public internet and from any external network such that no data can be transmitted to or from the system expect through controlled, logged, and authenticated transfer procedures<span class="tip-body"><a href="https://www.ibm.com/think/topics/air-gap" target="_blank" rel="noopener">IBM's article on air-gapping.</a></span></span></p>
+<p class="lvl-1">(f) <span class="tip">"Air-gapped" means physically isolated from the public internet and from any external network such that no data can be transmitted to or from the system except through controlled, logged, and authenticated transfer procedures<span class="tip-body"><a href="https://www.ibm.com/think/topics/air-gap" target="_blank" rel="noopener">IBM's article on air-gapping.</a></span></span></p>
 
 <p class="lvl-1">(g) Data Center: A facility used primarily to house computer systems and associated components, including servers, storage systems, and networking equipment, that is used in part or in whole for the training, deployment, or operation of an artificial intelligence system.</p>
 
