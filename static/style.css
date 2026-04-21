@@ -497,6 +497,95 @@ html {
     border-radius: 2px;
 }
 
+/* --- Mini Earth between the bill and the authors -----------------
+   Quiet reprise of the splash globe, centered in the column. Sits
+   on a soft radial glow that fades into the page background so the
+   transparent canvas blends without a visible edge. */
+.mini-globe {
+    margin: 4rem auto 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 260px;
+    height: 260px;
+}
+.mini-globe::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(circle,
+        rgba(76, 140, 255, 0.12) 0%,
+        rgba(76, 140, 255, 0.04) 45%,
+        transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+}
+.mini-globe canvas {
+    display: block;
+    background: transparent;
+}
+
+/* --- Background satellites ---------------------------------------
+   Tiny glowing dots with a faint trailing line, spawned by JS and
+   animated across the viewport. z-index sits above the starfield
+   but below the content column so they read as part of the space
+   atmosphere, never obstructing text. */
+.satellite-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+.satellite {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow:
+        0 0 6px rgba(255, 255, 255, 0.85),
+        0 0 14px rgba(168, 200, 255, 0.55);
+    opacity: 0.8;
+    /* Position is driven by custom properties set in JS, and the
+       keyframes interpolate from start to end translate values. */
+    transform: translate(var(--sat-start-x), var(--sat-start-y)) scaleX(var(--sat-flip, 1));
+    animation-name: satellite-fly;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+/* Tiny trailing streak, like a comet's tail. */
+.satellite::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    width: 28px;
+    height: 1px;
+    background: linear-gradient(
+        to left,
+        rgba(255, 255, 255, 0.7),
+        rgba(255, 255, 255, 0)
+    );
+    transform: translateY(-50%);
+}
+@keyframes satellite-fly {
+    from {
+        transform: translate(var(--sat-start-x), var(--sat-start-y)) scaleX(var(--sat-flip, 1));
+        opacity: 0;
+    }
+    10% { opacity: 0.85; }
+    90% { opacity: 0.85; }
+    to {
+        transform: translate(var(--sat-end-x), var(--sat-end-y)) scaleX(var(--sat-flip, 1));
+        opacity: 0;
+    }
+}
+
 /* --- Footer with author credits -------------------------------- */
 .page-footer {
     margin-top: 5rem;
@@ -590,157 +679,203 @@ html {
     color: #fff;
 }
 
-/* --- Hover-triggered tooltips ----------------------------------
-   Usage in any content .md file:
+/* --- Click-to-open side comments -------------------------------
+   Usage in any content .md file stays the same:
 
-     <span class="tip">visible text<span class="tip-body">pop-up text</span></span>
+     <span class="tip">visible text<span class="tip-body">comment body</span></span>
 
-   The outer span is what appears on the page (with a subtle
-   dotted underline so readers know to hover). The inner
-   .tip-body is the pop-up — hidden until hover on desktop
-   or tap on mobile. */
+   The outer span is a clickable trigger (red dotted underline so
+   readers know a comment is available). The inner .tip-body is
+   HIDDEN from the flow — its contents are lifted into the fixed
+   .comment-panel on click, and a curved line connects the two. */
 .tip {
     position: relative;
-    /* Bundle C: red dotted underline signals a citation is available. */
     border-bottom: 1px dotted rgba(230, 57, 70, 0.75);
-    cursor: help;
+    cursor: pointer;
+    transition:
+        background 0.18s ease,
+        border-bottom-color 0.18s ease;
+}
+.tip:hover {
+    border-bottom-color: var(--accent-red);
+    background: rgba(230, 57, 70, 0.08);
+}
+/* Stronger highlight on whichever tip is currently open in the side
+   panel, so readers always know which sentence the panel belongs to. */
+.tip.active {
+    background: rgba(230, 57, 70, 0.18);
+    border-bottom: 1px solid var(--accent-red);
+    box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.35);
+    border-radius: 2px;
 }
 
-/* Invisible hover bridge — fills the 12px gap between the underlined
-   text and the pop-up to its right, so the mouse can cross into the
-   pop-up (and click a link inside) without hover lapsing. */
-.tip::before {
-    content: "";
-    position: absolute;
-    left: 100%;
-    top: -4px;
-    bottom: -4px;
-    width: 18px;
-    /* No background — just a hoverable hit area. */
-}
-
+/* The authoring markup ships .tip-body inline with the text, but the
+   panel is the actual display surface — hide the inline version. */
 .tip-body {
-    /* Hidden by default. Anchored to the right of the underlined
-       word, vertically centered on the text, so it doesn't cover
-       the surrounding line like the old "float above" layout did. */
-    position: absolute;
-    left: calc(100% + 12px);
+    display: none;
+}
+
+/* Fixed comment panel, pinned to the right edge of the viewport.
+   Hidden off-screen until a tip is clicked; slides in and stays put
+   until dismissed. Width tuned to feel like a margin annotation
+   rather than a modal. */
+.comment-panel {
+    position: fixed;
     top: 50%;
-    transform: translateY(-50%) translateX(6px);
-    width: max-content;
-    max-width: min(340px, calc(100vw - 3rem));
+    right: 2rem;
+    transform: translateY(-50%) translateX(16px);
+    width: min(380px, calc(100vw - 3rem));
+    max-height: min(78vh, 640px);
+    overflow-y: auto;
+    z-index: 80;
 
-    background: #0a0a0a;
-    color: #fff;
-    font-family: 'Spectral', Georgia, serif;
-    font-size: 0.95rem;
-    font-weight: 400;
-    font-style: normal;
-    line-height: 1.55;
-    text-align: left;
-    white-space: normal;
-
-    padding: 0.85rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: #0d0d0d;
+    color: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-left: 3px solid var(--accent-red);
     border-radius: 6px;
     box-shadow:
-        0 14px 34px rgba(0, 0, 0, 0.85),
-        0 6px 14px rgba(0, 0, 0, 0.6),
-        0 0 0 1px rgba(0, 0, 0, 0.4);
+        0 24px 60px rgba(0, 0, 0, 0.75),
+        0 8px 20px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(0, 0, 0, 0.5);
+
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 1rem;
+    line-height: 1.65;
+    padding: 1.4rem 1.5rem 1.25rem;
 
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transition:
-        opacity 0.18s ease,
-        transform 0.18s ease,
-        visibility 0.18s;
-    /* Stay visible 250ms after hover ends — gives the mouse time
-       to travel into the pop-up or to a link inside it. Showing
-       is still instant (see the hover rule below). */
-    transition-delay: 0.25s;
-    z-index: 50;
+        opacity 0.22s ease,
+        transform 0.22s ease,
+        visibility 0.22s;
 }
-
-/* Little arrow pointing left at the underlined word (since the pop-up
-   now lives to the right of the word). Two triangles stacked — outer
-   matches the border, inner matches the body — for a clean bordered
-   arrow. */
-.tip-body::before,
-.tip-body::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    border: 7px solid transparent;
-}
-.tip-body::before {
-    right: 100%;
-    border-right-color: rgba(255, 255, 255, 0.22);
-}
-.tip-body::after {
-    right: 100%;
-    margin-right: -1px;
-    border-width: 6px;
-    border-right-color: #0a0a0a;
-}
-
-/* Reveal on hover (desktop), keyboard focus, or .open (tapped on mobile).
-   transition-delay: 0s overrides the 0.25s close delay — showing is
-   instant, only the hide has a grace period. */
-.tip:hover .tip-body,
-.tip:focus-within .tip-body,
-.tip.open .tip-body {
+.comment-panel.open {
     opacity: 1;
     visibility: visible;
-    transform: translateY(-50%) translateX(0);
     pointer-events: auto;
-    transition-delay: 0s;
-}
-
-/* Opt-in: .tip.tip-left places the pop-up to the LEFT of the word
-   instead of the right. Use on tooltips that sit near the right edge
-   of a line where a right-side pop-up would spill off the column. */
-.tip.tip-left::before {
-    left: auto;
-    right: 100%;
-}
-.tip.tip-left .tip-body {
-    left: auto;
-    right: calc(100% + 12px);
-    transform: translateY(-50%) translateX(-6px);
-}
-.tip.tip-left .tip-body::before,
-.tip.tip-left .tip-body::after {
-    right: auto;
-    left: 100%;
-}
-.tip.tip-left .tip-body::before {
-    border-right-color: transparent;
-    border-left-color: rgba(255, 255, 255, 0.22);
-}
-.tip.tip-left .tip-body::after {
-    border-right-color: transparent;
-    border-left-color: #0a0a0a;
-    margin-right: 0;
-    margin-left: -1px;
-}
-.tip.tip-left:hover .tip-body,
-.tip.tip-left:focus-within .tip-body,
-.tip.tip-left.open .tip-body {
     transform: translateY(-50%) translateX(0);
 }
-
-/* Links inside pop-ups — readable on the black background, and
-   long URLs wrap instead of overflowing the box. */
-.tip-body a {
+.comment-panel__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.comment-panel__label {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-red);
+    font-weight: 600;
+}
+.comment-panel__close {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 50%;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.comment-panel__close:hover {
+    color: #fff;
+    border-color: var(--accent-red);
+    background: rgba(230, 57, 70, 0.15);
+}
+.comment-panel__quote {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.55);
+    font-style: italic;
+    border-left: 2px solid rgba(230, 57, 70, 0.55);
+    padding: 0.1rem 0 0.1rem 0.75rem;
+    margin-bottom: 1rem;
+    /* Clamp the excerpt so a very long underlined phrase doesn't
+       take over the whole panel. */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.comment-panel__body {
+    font-size: 1.02rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+.comment-panel__body p { margin-bottom: 0.85rem; }
+.comment-panel__body p:last-child { margin-bottom: 0; }
+.comment-panel__body a {
     color: #a8c8ff;
     text-decoration: underline;
     text-underline-offset: 2px;
     word-break: break-word;
 }
-.tip-body a:hover {
+.comment-panel__body a:hover { color: #fff; }
+.comment-panel__body h1,
+.comment-panel__body h2,
+.comment-panel__body h3,
+.comment-panel__body h4 {
+    font-weight: 700;
     color: #fff;
+    margin: 0.4rem 0 0.45rem;
+    font-size: 1.05rem;
+}
+
+/* SVG overlay that draws the bezier connector between the clicked
+   phrase and the panel. Spans the whole viewport, ignores pointer
+   events so it never blocks anything. Stroke is the accent red with
+   a soft outer halo for legibility against the black background. */
+.comment-connector {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 75;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+}
+.comment-connector.visible { opacity: 1; }
+.comment-connector path {
+    fill: none;
+    stroke: var(--accent-red);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 4px rgba(230, 57, 70, 0.45));
+}
+.comment-connector circle {
+    fill: var(--accent-red);
+    filter: drop-shadow(0 0 6px rgba(230, 57, 70, 0.6));
+}
+
+/* Narrow viewports: the panel becomes a bottom sheet rather than a
+   side rail, and the connector hides itself (no room for it to make
+   visual sense next to a full-width panel). */
+@media (max-width: 900px) {
+    .comment-panel {
+        top: auto;
+        right: 0.75rem;
+        left: 0.75rem;
+        bottom: 0.75rem;
+        width: auto;
+        max-height: 60vh;
+        transform: translateY(18px);
+    }
+    .comment-panel.open {
+        transform: translateY(0);
+    }
+    .comment-connector { display: none; }
 }
 
 /* --- PDF download button (sits at the top of the bill) ---------

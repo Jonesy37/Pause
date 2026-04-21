@@ -16,6 +16,11 @@
     <div class="stars stars-medium"></div>
     <div class="stars stars-large"></div>
 
+    <!-- Satellite layer. Individual .satellite elements are spawned by
+         JS with random trajectories, then removed on animation end.
+         Sits behind the content column so it never competes with text. -->
+    <div class="satellite-layer" aria-hidden="true"></div>
+
     <!-- Fixed sidebar with anchor links -->
     <nav class="side-nav" aria-label="Sections">
         <ul>
@@ -35,6 +40,22 @@
             </li>
         </ul>
     </nav>
+
+    <!-- SVG overlay for the red connector line that runs from a clicked
+         phrase over to the comment panel on the right. Lives outside
+         the scrolling <main> so its coordinate system is viewport-fixed. -->
+    <svg class="comment-connector" aria-hidden="true"></svg>
+
+    <!-- The side comment panel. Populated + opened by JS when any .tip
+         in the page is clicked. Stays put until dismissed. -->
+    <aside class="comment-panel" role="complementary" aria-label="Source comment" aria-live="polite">
+        <div class="comment-panel__header">
+            <span class="comment-panel__label">Source</span>
+            <button type="button" class="comment-panel__close" aria-label="Close comment">&times;</button>
+        </div>
+        <blockquote class="comment-panel__quote"></blockquote>
+        <div class="comment-panel__body"></div>
+    </aside>
 
     <main class="mission">
         <header class="page-header">
@@ -82,11 +103,18 @@
             </div>
         </section>
 
+        <!-- Small rotating Earth — a quiet reprise of the splash globe,
+             tucked between the bill and the authors. Uses the same
+             Three.js textures. No atmosphere, no interaction. -->
+        <div id="mini-globe" class="mini-globe" aria-hidden="true"></div>
+
         <footer class="page-footer">
             {{ authors_html|safe }}
         </footer>
     </main>
 
+    <!-- Three.js is only needed on the mission page for the mini globe. -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script>
     // Scroll-spy for the sidebar. Highlights the main section (Our
     // Position / The Bill) currently in view, and — once inside The
@@ -204,73 +232,230 @@
         update();  // set initial positions on load
     })();
 
-    // Auto-flip tooltips that would spill off the right edge.
-    // The default position is to the right of the underlined word;
-    // if there isn't enough room there, add .tip-left to flip it to
-    // the opposite side. Runs once on load and again on resize.
+    // Click-to-open sidebar comments + connector line.
+    // Each .tip has a nested .tip-body whose innerHTML is the comment
+    // content. Clicking a .tip lifts that content into the fixed
+    // .comment-panel on the right, marks the tip .active, and draws
+    // a red bezier line from the word to the panel. Scrolling/resizing
+    // redraws the line so the connector tracks its anchor.
     (function () {
-        const tips = document.querySelectorAll('.tip');
-        function measure() {
-            tips.forEach(el => {
-                const body = el.querySelector('.tip-body');
-                if (!body) return;
-                // Temporarily make the pop-up measurable without
-                // actually showing it to the user.
-                const prev = {
-                    visibility: body.style.visibility,
-                    opacity: body.style.opacity,
-                    display: body.style.display,
-                };
-                body.style.visibility = 'hidden';
-                body.style.opacity = '0';
-                body.style.display = 'block';
+        const tips    = document.querySelectorAll('.tip');
+        const panel   = document.querySelector('.comment-panel');
+        const quoteEl = panel?.querySelector('.comment-panel__quote');
+        const bodyEl  = panel?.querySelector('.comment-panel__body');
+        const closeEl = panel?.querySelector('.comment-panel__close');
+        const svg     = document.querySelector('.comment-connector');
+        if (!tips.length || !panel || !svg) return;
 
-                el.classList.remove('tip-left');
-                const wordRight = el.getBoundingClientRect().right;
-                const bodyWidth = body.getBoundingClientRect().width;
-                const gap = 12; // matches --tip gap in CSS
-                const margin = 16;
-                if (wordRight + gap + bodyWidth + margin > window.innerWidth) {
-                    el.classList.add('tip-left');
-                }
+        // Namespace + single reused <path> so we don't churn the DOM
+        // on every scroll tick.
+        const SVG_NS = 'http://www.w3.org/2000/svg';
+        const path = document.createElementNS(SVG_NS, 'path');
+        const dot  = document.createElementNS(SVG_NS, 'circle');
+        dot.setAttribute('r', 3);
+        svg.appendChild(path);
+        svg.appendChild(dot);
 
-                body.style.visibility = prev.visibility;
-                body.style.opacity = prev.opacity;
-                body.style.display = prev.display;
-            });
+        let activeTip = null;
+
+        function close() {
+            if (activeTip) activeTip.classList.remove('active');
+            activeTip = null;
+            panel.classList.remove('open');
+            svg.classList.remove('visible');
         }
-        measure();
-        let t;
+
+        function drawLine() {
+            if (!activeTip) return;
+            const tipRect   = activeTip.getBoundingClientRect();
+            const panelRect = panel.getBoundingClientRect();
+
+            // Start just past the right edge of the underlined word,
+            // vertically centered on it.
+            const x1 = tipRect.right + 2;
+            const y1 = tipRect.top + tipRect.height / 2;
+            // End at the midpoint of the panel's left edge.
+            const x2 = panelRect.left;
+            const y2 = panelRect.top + panelRect.height / 2;
+
+            // Cubic bezier with horizontal tangents — gives a soft
+            // S-curve no matter where the word is on the page.
+            const dx = Math.max(40, (x2 - x1) * 0.4);
+            const c1x = x1 + dx;
+            const c2x = x2 - dx;
+            path.setAttribute('d', `M${x1},${y1} C${c1x},${y1} ${c2x},${y2} ${x2},${y2}`);
+            dot.setAttribute('cx', x1);
+            dot.setAttribute('cy', y1);
+        }
+
+        function open(tip) {
+            // Lift content out of the authoring markup into the panel.
+            const tipBody = tip.querySelector('.tip-body');
+            bodyEl.innerHTML = tipBody ? tipBody.innerHTML : '';
+
+            // Build the quote (the underlined phrase itself) from a
+            // clone of the tip with .tip-body stripped out.
+            const clone = tip.cloneNode(true);
+            clone.querySelectorAll('.tip-body').forEach(n => n.remove());
+            quoteEl.textContent = clone.textContent.replace(/\s+/g, ' ').trim();
+
+            if (activeTip && activeTip !== tip) activeTip.classList.remove('active');
+            activeTip = tip;
+            tip.classList.add('active');
+            panel.classList.add('open');
+            svg.classList.add('visible');
+            requestAnimationFrame(drawLine);
+        }
+
+        // Open on click. Let link clicks through (readers may try to
+        // follow a <a> inside .tip-body — rare but harmless now that
+        // .tip-body is display:none in the flow).
+        tips.forEach(tip => {
+            tip.addEventListener('click', (e) => {
+                if (e.target.closest('a')) return;
+                e.stopPropagation();
+                if (activeTip === tip) { close(); return; }
+                open(tip);
+            });
+        });
+
+        // Dismissals.
+        closeEl.addEventListener('click', close);
+        document.addEventListener('click', (e) => {
+            if (!panel.contains(e.target) && !e.target.closest('.tip')) close();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') close();
+        });
+
+        // Keep the connector aligned with its anchor on scroll/resize.
+        let ticking = false;
+        function onScrollOrResize() {
+            if (!activeTip || ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => { drawLine(); ticking = false; });
+        }
+        window.addEventListener('scroll', onScrollOrResize, { passive: true });
+        window.addEventListener('resize', onScrollOrResize);
+    })();
+
+    // Small rotating Earth between the bill and the footer. Reuses the
+    // same texture assets as the splash page but simpler: no atmosphere,
+    // no clouds, slower spin. Skipped if Three.js failed to load so the
+    // page still works offline.
+    (function () {
+        if (typeof THREE === 'undefined') return;
+        const container = document.getElementById('mini-globe');
+        if (!container) return;
+
+        const size = Math.min(window.innerWidth * 0.55, 260);
+        container.style.width = size + 'px';
+        container.style.height = size + 'px';
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+        camera.position.z = 3.1;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setClearColor(0x000000, 0);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(size, size);
+        container.appendChild(renderer.domElement);
+
+        const loader = new THREE.TextureLoader();
+        const earthTex  = loader.load("{{ url_for('static', filename='images/earth_color.jpg') }}");
+        const normalTex = loader.load("{{ url_for('static', filename='images/earth_normal.jpg') }}");
+        const specTex   = loader.load("{{ url_for('static', filename='images/earth_specular.jpg') }}");
+
+        const earth = new THREE.Mesh(
+            new THREE.SphereGeometry(1, 72, 72),
+            new THREE.MeshPhongMaterial({
+                map: earthTex, normalMap: normalTex, specularMap: specTex,
+                specular: new THREE.Color(0x222222), shininess: 14,
+            })
+        );
+        earth.rotation.z = 0.41;
+        scene.add(earth);
+
+        const sun = new THREE.DirectionalLight(0xffffff, 1.25);
+        sun.position.set(-4, 2, 3);
+        scene.add(sun);
+        scene.add(new THREE.AmbientLight(0x222233, 1));
+
+        // Pause the render loop when the globe is off-screen so it
+        // doesn't chew battery while the reader is up in the bill.
+        let visible = false;
+        const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; });
+        io.observe(container);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (!visible) return;
+            earth.rotation.y += 0.0011;
+            renderer.render(scene, camera);
+        }
+        animate();
+
         window.addEventListener('resize', () => {
-            clearTimeout(t);
-            t = setTimeout(measure, 120);
+            const s = Math.min(window.innerWidth * 0.55, 260);
+            container.style.width = s + 'px';
+            container.style.height = s + 'px';
+            renderer.setSize(s, s);
         });
     })();
 
-    // Tap-to-toggle for .tip tooltips on touch devices.
-    // Desktop hover still works via pure CSS; this just makes the same
-    // popups reachable on phones/tablets where :hover never fires.
+    // Background satellites. Every few seconds we spawn a small
+    // glowing dot that drifts diagonally across the viewport behind
+    // the main content, then removes itself when the traversal ends.
+    // Skipped entirely when prefers-reduced-motion is set.
     (function () {
-        const tips = document.querySelectorAll('.tip');
-        tips.forEach(el => {
-            el.addEventListener('click', (e) => {
-                // Don't stop link clicks — readers should still be able
-                // to follow <a> tags inside the pop-up body.
-                if (e.target.closest('a')) return;
-                // Tapping inside the open pop-up (but not on a link)
-                // shouldn't toggle it closed — let readers read.
-                if (e.target.closest('.tip-body')) {
-                    e.stopPropagation();
-                    return;
-                }
-                e.stopPropagation();
-                tips.forEach(o => { if (o !== el) o.classList.remove('open'); });
-                el.classList.toggle('open');
-            });
-        });
-        document.addEventListener('click', () => {
-            tips.forEach(o => o.classList.remove('open'));
-        });
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const layer = document.querySelector('.satellite-layer');
+        if (!layer) return;
+
+        const MAX_LIVE = 3;          // never more than this onscreen at once
+        const MIN_GAP  = 6000;       // ms — minimum gap between spawns
+        const MAX_GAP  = 14000;      // ms — maximum gap between spawns
+
+        function rand(min, max) { return min + Math.random() * (max - min); }
+
+        function spawn() {
+            if (layer.childElementCount >= MAX_LIVE) {
+                scheduleNext();
+                return;
+            }
+            // Pick a direction: left->right or right->left, with a
+            // slight vertical drift so no two look identical.
+            const dir  = Math.random() < 0.5 ? 1 : -1;
+            const startX = dir === 1 ? -5 : 105;           // % of viewport width
+            const endX   = dir === 1 ? 105 : -5;
+            const startY = rand(8, 88);                    // % of viewport height
+            const endY   = startY + rand(-18, 18);
+            const duration = rand(14000, 22000);
+
+            const sat = document.createElement('div');
+            sat.className = 'satellite';
+            sat.style.setProperty('--sat-start-x', startX + 'vw');
+            sat.style.setProperty('--sat-end-x',   endX + 'vw');
+            sat.style.setProperty('--sat-start-y', startY + 'vh');
+            sat.style.setProperty('--sat-end-y',   endY + 'vh');
+            sat.style.animationDuration = duration + 'ms';
+            // Flip horizontally so the "antenna" trails behind.
+            sat.style.setProperty('--sat-flip', dir === -1 ? '-1' : '1');
+
+            sat.addEventListener('animationend', () => sat.remove());
+            layer.appendChild(sat);
+
+            scheduleNext();
+        }
+
+        function scheduleNext() {
+            setTimeout(spawn, rand(MIN_GAP, MAX_GAP));
+        }
+
+        // First satellite appears a few seconds after page load so
+        // the reader sees at least one drift by.
+        setTimeout(spawn, 2500);
     })();
     </script>
 </body>
